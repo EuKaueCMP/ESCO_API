@@ -1,33 +1,36 @@
 CREATE DATABASE esco_db;
+\c esco_db
 CREATE SCHEMA IF NOT EXISTS esco_dataset;
+-- Faz com que o postgres procure e rode comandos dentro do schema definido
+SET search_path TO esco_dataset; 
 
 -- ENUMs do banco de dados
 ---- status 
-CREATE TYPE esco_dataset.status_enum
+CREATE TYPE status_enum
 AS ENUM('released', 'deprecated');
 
 ---- tipo habilidade
-CREATE TYPE esco_dataset.tipo_habilidade_enum
+CREATE TYPE tipo_habilidade_enum
 AS ENUM('conhecimento', 'competencia');
 
 -- classificacao habilidade
-CREATE TYPE esco_dataset.classificacao_habilidade_enum
+CREATE TYPE classificacao_habilidade_enum
 AS ENUM('hardskill', 'softskill');
 
 ---- tipo conceito
-CREATE TYPE esco_dataset.tipo_conceito_enum
+CREATE TYPE tipo_conceito_enum
 AS ENUM ('habilidade', 'grupo_habilidade');
 	
 ---- nivel reutilizacao
-CREATE TYPE esco_dataset.nivel_reutilizacao_enum 
+CREATE TYPE nivel_reutilizacao_enum 
 AS ENUM('transversal', 'intersetorial', 'especifico_setor', 'especifico_ocupacao');
 
 ---- tipo de relacionamento entre ocupação e habilidade
-CREATE TYPE esco_dataset.tipo_relacionamento_enum
+CREATE TYPE tipo_relacionamento_enum
 AS ENUM ('essencial', 'opcional');
 ----
 
-CREATE TABLE  esco_dataset.grupo_ocupacao
+CREATE TABLE grupo_ocupacao
 (
 	grupo_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
@@ -36,29 +39,29 @@ CREATE TABLE  esco_dataset.grupo_ocupacao
 	descricao TEXT NOT NULL
 );
 
-CREATE TABLE esco_dataset.ocupacao
+CREATE TABLE ocupacao
 (
 	ocupacao_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
 	titulo TEXT NOT NULL,
 	descricao TEXT NOT NULL,
-	status esco_dataset.status_enum NOT NULL,
+	status status_enum NOT NULL,
 	nomes_alternativos JSONB,
-	grupo_ocupacao_id INTEGER NOT NULL REFERENCES esco_dataset.grupo_ocupacao(grupo_id)
+	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id)
 );
 
-CREATE TABLE esco_dataset.habilidade
+CREATE TABLE habilidade
 (
 	habilidade_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
 	nome TEXT NOT NULL,
 	descricao TEXT NOT NULL,
 	nomes_alternativos JSONB,
-	status esco_dataset.status_enum NOT NULL,
-	tipo_habilidade esco_dataset.tipo_habilidade_enum,
-	nivel_reutilizacao esco_dataset.nivel_reutilizacao_enum,
-	tipo_conceito esco_dataset.tipo_conceito_enum NOT NULL,
-	classificacao_habilidade esco_dataset.classificacao_habilidade_enum,
+	status status_enum NOT NULL,
+	tipo_habilidade tipo_habilidade_enum,
+	nivel_reutilizacao nivel_reutilizacao_enum,
+	tipo_conceito tipo_conceito_enum NOT NULL,
+	classificacao_habilidade classificacao_habilidade_enum,
 	
 	CONSTRAINT ck_habilidade_campos_por_conceito
     CHECK (
@@ -86,24 +89,24 @@ CREATE TABLE esco_dataset.habilidade
     )
 );
 
-CREATE TABLE esco_dataset.ocupacao_habilidade
+CREATE TABLE ocupacao_habilidade
 (
-	ocupacao_id INTEGER NOT NULL REFERENCES esco_dataset.ocupacao(ocupacao_id),
-	habilidade_id INTEGER NOT NULL REFERENCES esco_dataset.habilidade(habilidade_id),
-	tipo_relacionamento esco_dataset.tipo_relacionamento_enum NOT NULL,
+	ocupacao_id INTEGER NOT NULL REFERENCES ocupacao(ocupacao_id),
+	habilidade_id INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
+	tipo_relacionamento tipo_relacionamento_enum NOT NULL,
 	
 	PRIMARY KEY (ocupacao_id, habilidade_id)
 );
 
-CREATE TABLE esco_dataset.hierarquia_habilidade
+CREATE TABLE hierarquia_habilidade
 (
-	habilidade_pai INTEGER NOT NULL REFERENCES esco_dataset.habilidade(habilidade_id),
-	habilidade_filha INTEGER NOT NULL REFERENCES esco_dataset.habilidade(habilidade_id),
+	habilidade_pai INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
+	habilidade_filha INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
 	
 	PRIMARY KEY (habilidade_pai, habilidade_filha)
 );
 
-CREATE TABLE esco_dataset.colecao
+CREATE TABLE colecao
 (
 	colecao_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
@@ -111,12 +114,10 @@ CREATE TABLE esco_dataset.colecao
 	descricao TEXT NOT NULL
 );
 
-CREATE TABLE esco_dataset.habilidade_colecao
+CREATE TABLE habilidade_colecao
 (
-	habilidade_id INTEGER NOT NULL REFERENCES esco_dataset.habilidade(habilidade_id),
-	colecao_id INTEGER NOT NULL REFERENCES esco_dataset.colecao(colecao_id),
+	habilidade_id INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
+	colecao_id INTEGER NOT NULL REFERENCES colecao(colecao_id),
 	
 	PRIMARY KEY (habilidade_id, colecao_id)
 );
-
-	
