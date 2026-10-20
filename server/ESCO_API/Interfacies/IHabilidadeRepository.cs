@@ -1,0 +1,11 @@
+using ESCO_API.Domains;
+
+namespace ESCO_API.Interfacies
+{
+    public interface IHabilidadeRepository
+    {
+        public Task<List<Habilidade>> Listar();
+        public Task<List<Habilidade>> ListarPorPalavraChave(string palavra);
+        public Task<Habilidade> ObterPorId(int habilidadeId);
+    }
+}
