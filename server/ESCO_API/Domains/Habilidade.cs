@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NpgsqlTypes;
 
 namespace ESCO_API.Domains;
 
@@ -12,6 +13,18 @@ public partial class Habilidade
     public string Nome { get; set; } = null!;
 
     public string Descricao { get; set; } = null!;
+
+    public NpgsqlTsVector? SearchVector { get; set; }
+
+    public StatusEnum StatusHabilidade { get; set; }
+
+    public NivelReutilizacaoEnum NivelReutilizacao { get; set; }
+    
+    public TipoHabilidadeEnum TipoHabilidade { get; set; }
+    
+    public TipoConceitoEnum TipoConceito { get; set; }
+    
+    public ClassificacaoHabilidadeEnum ClassificacaoHabilidade { get; set; }
 
     public string? NomesAlternativos { get; set; }
 

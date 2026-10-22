@@ -28,7 +28,8 @@ public partial class EscoContext : DbContext
             .HasPostgresEnum("esco_dataset", "status_enum", new[] { "released", "deprecated" })
             .HasPostgresEnum("esco_dataset", "tipo_conceito_enum", new[] { "habilidade", "grupo_habilidade" })
             .HasPostgresEnum("esco_dataset", "tipo_habilidade_enum", new[] { "conhecimento", "competencia" })
-            .HasPostgresEnum("esco_dataset", "tipo_relacionamento_enum", new[] { "essencial", "opcional" });
+            .HasPostgresEnum("esco_dataset", "tipo_relacionamento_enum", new[] { "essencial", "opcional" })
+            .HasPostgresExtension("esco_dataset", "pg_trgm");
 
         modelBuilder.Entity<Colecao>(entity =>
         {
@@ -38,9 +39,14 @@ public partial class EscoContext : DbContext
 
             entity.HasIndex(e => e.Uri, "colecao_uri_key").IsUnique();
 
+            entity.HasIndex(e => e.SearchVector, "idx_colecao_fts").HasMethod("gin");
+
             entity.Property(e => e.ColecaoId).HasColumnName("colecao_id");
             entity.Property(e => e.Descricao).HasColumnName("descricao");
             entity.Property(e => e.Nome).HasColumnName("nome");
+            entity.Property(e => e.SearchVector)
+                .HasComputedColumnSql("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(nome, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))", true)
+                .HasColumnName("search_vector");
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
                 .HasColumnName("uri");
@@ -56,12 +62,17 @@ public partial class EscoContext : DbContext
 
             entity.HasIndex(e => e.Uri, "grupo_ocupacao_uri_key").IsUnique();
 
+            entity.HasIndex(e => e.SearchVector, "idx_grupo_ocupacao_rts").HasMethod("gin");
+
             entity.Property(e => e.GrupoId).HasColumnName("grupo_id");
             entity.Property(e => e.Codigo)
                 .HasMaxLength(20)
                 .HasColumnName("codigo");
             entity.Property(e => e.Descricao).HasColumnName("descricao");
             entity.Property(e => e.Nome).HasColumnName("nome");
+            entity.Property(e => e.SearchVector)
+                .HasComputedColumnSql("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(nome, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))", true)
+                .HasColumnName("search_vector");
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
                 .HasColumnName("uri");
@@ -75,12 +86,17 @@ public partial class EscoContext : DbContext
 
             entity.HasIndex(e => e.Uri, "habilidade_uri_key").IsUnique();
 
+            entity.HasIndex(e => e.SearchVector, "idx_habilidade_fts").HasMethod("gin");
+
             entity.Property(e => e.HabilidadeId).HasColumnName("habilidade_id");
             entity.Property(e => e.Descricao).HasColumnName("descricao");
             entity.Property(e => e.Nome).HasColumnName("nome");
             entity.Property(e => e.NomesAlternativos)
                 .HasColumnType("jsonb")
                 .HasColumnName("nomes_alternativos");
+            entity.Property(e => e.SearchVector)
+                .HasComputedColumnSql("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(nome, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))", true)
+                .HasColumnName("search_vector");
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
                 .HasColumnName("uri");
@@ -149,6 +165,8 @@ public partial class EscoContext : DbContext
 
             entity.ToTable("ocupacao", "esco_dataset");
 
+            entity.HasIndex(e => e.SearchVector, "idx_ocupacao_fts").HasMethod("gin");
+
             entity.HasIndex(e => e.Uri, "ocupacao_uri_key").IsUnique();
 
             entity.Property(e => e.OcupacaoId).HasColumnName("ocupacao_id");
@@ -157,6 +175,9 @@ public partial class EscoContext : DbContext
             entity.Property(e => e.NomesAlternativos)
                 .HasColumnType("jsonb")
                 .HasColumnName("nomes_alternativos");
+            entity.Property(e => e.SearchVector)
+                .HasComputedColumnSql("(setweight(to_tsvector('portuguese'::regconfig, COALESCE(titulo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))", true)
+                .HasColumnName("search_vector");
             entity.Property(e => e.Titulo).HasColumnName("titulo");
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
