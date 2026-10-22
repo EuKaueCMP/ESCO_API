@@ -33,6 +33,7 @@ CREATE TYPE tipo_relacionamento_enum
 AS ENUM ('essencial', 'opcional');
 ----
 
+
 CREATE TABLE grupo_ocupacao
 (
 	grupo_id SERIAL PRIMARY KEY,
@@ -40,7 +41,14 @@ CREATE TABLE grupo_ocupacao
 	codigo VARCHAR(20) UNIQUE NOT NULL,
 	nome TEXT NOT NULL,
 	descricao TEXT NOT NULL
+	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id),
+	search_vector TSVECTOR
+		GENERATED ALWAYS AS(
+			setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
+			setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
+		) STORED
 );
+
 
 CREATE TABLE ocupacao
 (
@@ -58,20 +66,11 @@ CREATE TABLE ocupacao
 		) STORED
 );
 
---
----- ADICIONANDO A COLUNA DO FULL TEXT SEARCH VIA
----- ALTER TABLE
---
--- ALTER TABLE ocupacao
--- ADD COLUMN search_vector TSVECTOR
--- GENERATED ALWAYS AS(
---	 setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
---	 setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
--- ) STORED
-
 CREATE INDEX idx_ocupacao_fts
 	ON ocupacao
 	USING GIN (search_vector);
+
+
 
 CREATE TABLE habilidade
 (
@@ -116,21 +115,12 @@ CREATE TABLE habilidade
         )
     )
 );
---
----- ADICIONANDO A COLUNA DO FULL TEXT SEARCH VIA
----- ALTER TABLE
---
--- ALTER TABLE habilidade
--- ADD COLUMN search_vector TSVECTOR
--- GENERATED ALWAYS AS 
--- 	 (setweight(to_tsvector('portuguese',coalesce(nome, '')), 'A') ||
---	 setweight(to_tsvector('portuguese',coalesce(descricao, '')), 'B')
--- )STORED
-
 
 CREATE INDEX idx_habilidade_fts
 	ON habilidade
 	USING GIN (search_vector);
+
+
 
 CREATE TABLE ocupacao_habilidade
 (
@@ -141,6 +131,8 @@ CREATE TABLE ocupacao_habilidade
 	PRIMARY KEY (ocupacao_id, habilidade_id)
 );
 
+
+
 CREATE TABLE hierarquia_habilidade
 (
 	habilidade_pai INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
@@ -149,12 +141,18 @@ CREATE TABLE hierarquia_habilidade
 	PRIMARY KEY (habilidade_pai, habilidade_filha)
 );
 
+
 CREATE TABLE colecao
 (
 	colecao_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
 	nome TEXT NOT NULL,
-	descricao TEXT NOT NULL
+	descricao TEXT NOT NULL,
+	search_vector TSVECTOR
+	GENERATED ALWAYS AS(
+		setweight(to_tsvector('portuguese', coalesce(nome, ''), 'A') ||
+		setweight(to_tsvector('portuguese', coalesce(descricao, ''), 'B')
+	) STORED
 );
 
 CREATE TABLE habilidade_colecao
