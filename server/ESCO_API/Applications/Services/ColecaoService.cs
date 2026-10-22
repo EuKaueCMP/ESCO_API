@@ -16,7 +16,9 @@ namespace ESCO_API.Services
             List<Colecao> colecoes = await _repository.Listar()
                  ?? throw new DomainException("Nenhuma colecao encontrada.");
 
-            return colecoes.Select(c => DomainToDto.ColecaoToDto(c)).ToList();
+            return colecoes
+                .Select(c => DomainToDto.ColecaoToDto(c))
+                .ToList();
         }
 
         public async Task<List<ListarColecaoDto>> ListarPorTermo(string termo)
@@ -27,7 +29,9 @@ namespace ESCO_API.Services
             List<Colecao> colecoes = await _repository.ListarPorTermo(termo)
                 ?? throw new DomainException("Nenhuma colecao encontrada.");
 
-            return colecoes.Select(c => DomainToDto.ColecaoToDto(c)).ToList();
+            return colecoes
+                .Select(c => DomainToDto.ColecaoToDto(c))
+                .ToList();
         }
 
         public async Task<ListarColecaoDto> ObterPorId(int colecaoId)

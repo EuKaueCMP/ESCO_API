@@ -18,9 +18,9 @@ namespace ESCO_API.Conversions
             };
         }
 
-        public static ListarGrupoColecaoDto GrupoOcupacaoToDto(GrupoOcupacao grupo)
+        public static ListarGrupoOcupacaoDto GrupoOcupacaoToDto(GrupoOcupacao grupo)
         {
-            return new ListarGrupoColecaoDto
+            return new ListarGrupoOcupacaoDto
             {
                 GrupoId = grupo.GrupoId,
                 Nome = grupo.Nome,

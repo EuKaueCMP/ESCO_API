@@ -1,6 +1,6 @@
 namespace ESCO_API.DTOs.GrupoOcupacaoDTO;
 
-public partial class ListarGrupoColecaoDto
+public partial class ListarGrupoOcupacaoDto
 {
     public int GrupoId { get; set; }
 

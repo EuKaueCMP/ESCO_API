@@ -1,7 +1,7 @@
 namespace ESCO_API.Excptions
 {
-    public class DomainExceptionException : Exception
+    public class DomainException : Exception
     {
-        public DomainExceptionException(string message) : base(message) { }
+        public DomainException(string message) : base(message) { }
     }
 }
