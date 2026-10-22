@@ -4,6 +4,9 @@ CREATE SCHEMA IF NOT EXISTS esco_dataset;
 -- Faz com que o postgres procure e rode comandos dentro do schema definido
 SET search_path TO esco_dataset; 
 
+-- Importando a extensão pg_trgm
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- ENUMs do banco de dados
 ---- status 
 CREATE TYPE status_enum
@@ -48,7 +51,27 @@ CREATE TABLE ocupacao
 	status status_enum NOT NULL,
 	nomes_alternativos JSONB,
 	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id)
+	search_vector TSVECTOR
+		GENERATED ALWAYS AS(
+			setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
+			setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
+		) STORED
 );
+
+--
+---- ADICIONANDO A COLUNA DO FULL TEXT SEARCH VIA
+---- ALTER TABLE
+--
+-- ALTER TABLE ocupacao
+-- ADD COLUMN search_vector TSVECTOR
+-- GENERATED ALWAYS AS(
+--	 setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
+--	 setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
+-- ) STORED
+
+CREATE INDEX idx_ocupacao_fts
+	ON ocupacao
+	USING GIN (search_vector);
 
 CREATE TABLE habilidade
 (
@@ -62,6 +85,11 @@ CREATE TABLE habilidade
 	nivel_reutilizacao nivel_reutilizacao_enum,
 	tipo_conceito tipo_conceito_enum NOT NULL,
 	classificacao_habilidade classificacao_habilidade_enum,
+	search_vector TSVECTOR
+		GENERATED ALWAYS AS(
+			setweight(to_tsvector('portuguese',	coalesce(nome, '')), 'A') ||
+			setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B') 
+		) STORED,
 	
 	CONSTRAINT ck_habilidade_campos_por_conceito
     CHECK (
@@ -88,6 +116,21 @@ CREATE TABLE habilidade
         )
     )
 );
+--
+---- ADICIONANDO A COLUNA DO FULL TEXT SEARCH VIA
+---- ALTER TABLE
+--
+-- ALTER TABLE habilidade
+-- ADD COLUMN search_vector TSVECTOR
+-- GENERATED ALWAYS AS 
+-- 	 (setweight(to_tsvector('portuguese',coalesce(nome, '')), 'A') ||
+--	 setweight(to_tsvector('portuguese',coalesce(descricao, '')), 'B')
+-- )STORED
+
+
+CREATE INDEX idx_habilidade_fts
+	ON habilidade
+	USING GIN (search_vector);
 
 CREATE TABLE ocupacao_habilidade
 (
