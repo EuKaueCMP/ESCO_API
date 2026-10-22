@@ -13,6 +13,7 @@ public partial class Ocupacao
     public string Titulo { get; set; } = null!;
 
     public string Descricao { get; set; } = null!;
+
     public StatusEnum StatusOcupacao {get; set;}
 
     public string? NomesAlternativos { get; set; }
