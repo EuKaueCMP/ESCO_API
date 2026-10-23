@@ -1,6 +1,9 @@
 using DotNetEnv;
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
+using ESCO_API.Interfacies;
+using ESCO_API.Repositories;
+using ESCO_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +33,22 @@ builder.Services.AddDbContext<EscoContext>(options => options.UseNpgsql(
 
 
 // Add services to the container.
+//? CRUD Colecao
+builder.Services.AddScoped<IColecaoRepository, ColecaoRepository>();
+builder.Services.AddScoped<ColecaoService>();
+
+//? CRUD GrupoOcupacao
+builder.Services.AddScoped<IGrupoOcupacaoRepository, GrupoOcupacaoRepository>();
+builder.Services.AddScoped<GrupoOcupacaoService>();
+
+//? CRUD Habilidade
+builder.Services.AddScoped<IHabilidadeRepository, HabilidadeRepository>();
+builder.Services.AddScoped<HabilidadeService>();
+
+//? CRUD Ocupacao
+builder.Services.AddScoped<IOcupacaoRepository, OcupacaoRepository>();
+builder.Services.AddScoped<OcupacaoService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
