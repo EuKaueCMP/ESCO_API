@@ -28,6 +28,6 @@ namespace ESCO_API.Repositories
         }
 
         public async Task<GrupoOcupacao> ObterPorId(int grupoId) 
-            => await _ctx.GrupoOcupacao.FirstAsync(g => g.GrupoId == grupoId);
+            => await _ctx.GrupoOcupacao.FirstOrDefaultAsync(g => g.GrupoId == grupoId);
     }
 }

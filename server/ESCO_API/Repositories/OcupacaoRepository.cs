@@ -32,7 +32,7 @@ namespace ESCO_API.Repositories
         public async Task<List<Ocupacao>> ListarPorGrupo(int grupoId)
         {
             GrupoOcupacao grupo = await _ctx.GrupoOcupacao
-                .FirstAsync(g => g.GrupoId == grupoId);
+                .FirstOrDefaultAsync(g => g.GrupoId == grupoId);
 
             return grupo.Ocupacao
                 .OrderBy(o => o.Titulo)
@@ -42,6 +42,6 @@ namespace ESCO_API.Repositories
         public async Task<Ocupacao> ObterPorId(int ocupacaoId)
             => await _ctx.Ocupacao
                 .Include(o => o.GrupoOcupacao)
-                .FirstAsync(h => h.OcupacaoId == ocupacaoId);
+                .FirstOrDefaultAsync(h => h.OcupacaoId == ocupacaoId);
     }
 }
