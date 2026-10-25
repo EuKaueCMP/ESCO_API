@@ -9,13 +9,8 @@ namespace ESCO_API.Services
     public class HabilidadeService
     {
         private readonly IHabilidadeRepository _repository;
-        private readonly IOcupacaoRepository _ocpRepository;
-
-        public HabilidadeService(IHabilidadeRepository repository, IOcupacaoRepository ocpRepository)
-{
-   _repository = repository;
-   _ocpRepository = ocpRepository;
-}
+        
+        public HabilidadeService(IHabilidadeRepository repository) => _repository = repository;
 
         public async Task<List<ListarHabilidadeDto>> Listar()
         {
@@ -40,18 +35,7 @@ namespace ESCO_API.Services
                 .ToList();
         }
 
-       public async Task<List<ListarHabilidadeDto>> ListarPorOcupacaoId(int ocupacaoId)
-        {
-            if(ocupacaoId <= 0)
-                throw new DomainException("Insira o id de uma ocupação.");
 
-            List<Habilidade> habilidades = await _repository.ListarPorOcupacaoId(ocupacaoId)
-                ?? throw new DomainException("Nenhuma habilidade encontrada.");
-
-            return habilidades
-                .Select(h => DomainToDto.HabilidadeToDto(h))
-                .ToList();
-        }
 
         public async Task<ListarHabilidadeDto> ObterPorId(int habilidadeId)
         {
