@@ -53,6 +53,19 @@ namespace ESCO_API.Controllers
             }
         }
 
+        [HttpGet("ocupacaoId/{ocupacaoId}/habilidades")]
+        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorOcupacaoId(int ocupacaoId)
+        {
+            try
+            {
+                return Ok(await _service.ListarPorOcupacaoId(ocupacaoId));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpGet("{ocupacaoId}")]
         public async Task<ActionResult<ListarOcupacaoDto>> ObterPorId(int ocupacaoId)
         {
