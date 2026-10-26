@@ -284,6 +284,10 @@ public partial class EscoContext : DbContext
             entity.Property(e => e.Titulo)
                 .HasColumnName("titulo");
 
+            entity.Property(e => e.StatusOcupacao)
+                .HasColumnName("status")
+                .HasColumnType("esco_dataset.status_enum");
+
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
                 .HasColumnName("uri");
