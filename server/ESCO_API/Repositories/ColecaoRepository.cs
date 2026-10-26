@@ -27,7 +27,7 @@ namespace ESCO_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Colecao> ObterPorId(int colecaoId) 
-            => await _ctx.Colecao.FirstAsync(c => c.ColecaoId == colecaoId); 
+        public async Task<Colecao?> ObterPorId(int colecaoId) 
+            => await _ctx.Colecao.FirstOrDefaultAsync(c => c.ColecaoId == colecaoId); 
     }
 }

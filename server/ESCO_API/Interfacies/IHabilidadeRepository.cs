@@ -6,6 +6,6 @@ namespace ESCO_API.Interfacies
     {
         public Task<List<Habilidade>> Listar();
         public Task<List<Habilidade>> ListarPorTermo(string palavra);
-        public Task<Habilidade> ObterPorId(int habilidadeId);
+        public Task<Habilidade?> ObterPorId(int habilidadeId);
     }
 }

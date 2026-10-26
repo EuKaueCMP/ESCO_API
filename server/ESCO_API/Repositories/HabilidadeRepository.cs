@@ -27,7 +27,7 @@ namespace ESCO_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Habilidade> ObterPorId(int habilidadeId) 
+        public async Task<Habilidade?> ObterPorId(int habilidadeId) 
             => await _ctx.Habilidade.FirstOrDefaultAsync(h => h.HabilidadeId == habilidadeId);
     }
 }

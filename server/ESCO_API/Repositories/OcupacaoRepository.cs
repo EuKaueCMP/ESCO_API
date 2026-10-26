@@ -29,26 +29,32 @@ namespace ESCO_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Ocupacao>> ListarPorGrupo(int grupoId)
+        public async Task<List<Ocupacao>?> ListarPorGrupo(int grupoId)
         {
-            GrupoOcupacao grupo = await _ctx.GrupoOcupacao
+            var grupo = await _ctx.GrupoOcupacao
                 .FirstOrDefaultAsync(g => g.GrupoId == grupoId);
+
+            if (grupo is null)
+                return null;
 
             return grupo.Ocupacao
                 .OrderBy(o => o.Titulo)
                 .ToList();
         }
 
-        public async Task<List<Habilidade>> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
+        public async Task<List<Habilidade>?> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
         {
-            Ocupacao ocupacao = await _ctx.Ocupacao
-            .Include(o => o.Habilidade)
-            .FirstOrDefaultAsync(o => o.OcupacaoId == ocupacaoId);
+            var ocupacao = await _ctx.Ocupacao
+                .Include(o => o.Habilidade)
+                .FirstOrDefaultAsync(o => o.OcupacaoId == ocupacaoId);
+
+            if (ocupacao is null)
+                return null;
 
             return ocupacao.Habilidade.ToList();
         }
 
-        public async Task<Ocupacao> ObterPorId(int ocupacaoId)
+        public async Task<Ocupacao?> ObterPorId(int ocupacaoId)
             => await _ctx.Ocupacao
                 .Include(o => o.GrupoOcupacao)
                 .FirstOrDefaultAsync(h => h.OcupacaoId == ocupacaoId);
