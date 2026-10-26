@@ -25,22 +25,28 @@ builder.Services.AddDbContext<EscoContext>(options =>
         npgsqloptions =>
         {
             npgsqloptions.MapEnum<ClassificacaoHabilidadeEnum>(
-                "esco_dataset.classificacao_habilidade_enum");
+                enumName: "classificacao_habilidade_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<NivelReutilizacaoEnum>(
-                "esco_dataset.nivel_reutilizacao_enum");
+                enumName: "nivel_reutilizacao_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<StatusEnum>(
-                "esco_dataset.status_enum");
+                enumName: "status_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoConceitoEnum>(
-                "esco_dataset.tipo_conceito_enum");
+                enumName: "tipo_conceito_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoHabilidadeEnum>(
-                "esco_dataset.tipo_habilidade_enum");
+                enumName: "tipo_habilidade_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoRelacionamentoEnum>(
-                "esco_dataset.tipo_relacionamento_enum");
+                enumName: "tipo_relacionamento_enum",
+                schemaName: "esco_dataset");
         }
     )
 );
