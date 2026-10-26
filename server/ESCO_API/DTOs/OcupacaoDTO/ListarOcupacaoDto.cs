@@ -12,7 +12,7 @@ public partial class ListarOcupacaoDto
 
     public StatusEnum StatusOcupacao {get; set;}
 
-    public string? NomesAlternativos { get; set; }
+    public List<string>? NomesAlternativos { get; set; }
 
     public string NomeGrupoOcupacao { get; set; } = string.Empty!;
     public int GrupoOcupacaoId { get; set; }

@@ -3,6 +3,7 @@ using ESCO_API.DTOs.ColecaoDTO;
 using ESCO_API.DTOs.GrupoOcupacaoDTO;
 using ESCO_API.DTOs.HabilidadeDTO;
 using ESCO_API.DTOs.OcupacaoDTO;
+using System.Text.Json;
 
 namespace ESCO_API.Conversions
 {
@@ -38,7 +39,7 @@ namespace ESCO_API.Conversions
                 Descricao = habilidade.Descricao,
                 ClassificacaoHabilidade = habilidade.ClassificacaoHabilidade,
                 NivelReutilizacao = habilidade.NivelReutilizacao,
-                NomesAlternativos = habilidade.NomesAlternativos,
+                NomesAlternativos = ConverterNomesAlternativos(habilidade.NomesAlternativos),
                 StatusHabilidade = habilidade.StatusHabilidade,
                 TipoConceito = habilidade.TipoConceito,
                 TipoHabilidade = habilidade.TipoHabilidade
@@ -54,9 +55,24 @@ namespace ESCO_API.Conversions
                 Descricao = ocupacao.Descricao,
                 NomeGrupoOcupacao = ocupacao.GrupoOcupacao.Nome,
                 GrupoOcupacaoId = ocupacao.GrupoOcupacaoId,
-                NomesAlternativos = ocupacao.NomesAlternativos,
+                NomesAlternativos = ConverterNomesAlternativos(ocupacao.NomesAlternativos),
                 StatusOcupacao = ocupacao.StatusOcupacao
             };
+        }
+
+        private static List<string>? ConverterNomesAlternativos(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            try
+            {
+                return JsonSerializer.Deserialize<List<string>>(json);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
     }
 }
