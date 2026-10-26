@@ -20,7 +20,7 @@ public partial class Ocupacao
 
     public int GrupoOcupacaoId { get; set; }
 
-    public NpgsqlTsVector? SearchVector { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 
     public virtual GrupoOcupacao GrupoOcupacao { get; set; } = null!;
 

@@ -1,11 +1,13 @@
 using DotNetEnv;
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
-using ESCO_API.Interfacies;
+using ESCO_API.Interfaces;
 using ESCO_API.Repositories;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,31 +18,41 @@ Env.Load();
 //?
 //? Loading connection string from .env
 var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+{
+    SearchPath = "esco_dataset,public"
+};
 
 //? 
 //? Connect with database
 builder.Services.AddDbContext<EscoContext>(options =>
     options.UseNpgsql(
-        connectionString,
+        connectionStringBuilder.ConnectionString,
         npgsqloptions =>
         {
             npgsqloptions.MapEnum<ClassificacaoHabilidadeEnum>(
-                "esco_dataset.classificacao_habilidade_enum");
+                enumName: "classificacao_habilidade_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<NivelReutilizacaoEnum>(
-                "esco_dataset.nivel_reutilizacao_enum");
+                enumName: "nivel_reutilizacao_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<StatusEnum>(
-                "esco_dataset.status_enum");
+                enumName: "status_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoConceitoEnum>(
-                "esco_dataset.tipo_conceito_enum");
+                enumName: "tipo_conceito_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoHabilidadeEnum>(
-                "esco_dataset.tipo_habilidade_enum");
+                enumName: "tipo_habilidade_enum",
+                schemaName: "esco_dataset");
 
             npgsqloptions.MapEnum<TipoRelacionamentoEnum>(
-                "esco_dataset.tipo_relacionamento_enum");
+                enumName: "tipo_relacionamento_enum",
+                schemaName: "esco_dataset");
         }
     )
 );
@@ -63,7 +75,9 @@ builder.Services.AddScoped<IOcupacaoRepository, OcupacaoRepository>();
 builder.Services.AddScoped<OcupacaoService>();
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 //? Importando o Cors policy
 builder.Services.AddCors(option =>

@@ -119,11 +119,11 @@ public partial class EscoContext : DbContext
                 .HasColumnName("descricao");
 
             entity.Property(e => e.Nome)
-                .HasColumnName("nome");
+                .HasColumnName("titulo");
 
             entity.Property(e => e.SearchVector)
                 .HasComputedColumnSql(
-                    "(setweight(to_tsvector('portuguese'::regconfig, COALESCE(nome, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))",
+                    "(setweight(to_tsvector('portuguese'::regconfig, COALESCE(titulo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))",
                     true)
                 .HasColumnName("search_vector");
 
@@ -283,6 +283,10 @@ public partial class EscoContext : DbContext
 
             entity.Property(e => e.Titulo)
                 .HasColumnName("titulo");
+
+            entity.Property(e => e.StatusOcupacao)
+                .HasColumnName("status")
+                .HasColumnType("esco_dataset.status_enum");
 
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)

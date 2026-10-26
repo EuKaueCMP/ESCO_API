@@ -1,6 +1,6 @@
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
-using ESCO_API.Interfacies;
+using ESCO_API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESCO_API.Repositories
@@ -18,37 +18,43 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Ocupacao>> ListarPorTermo(string termo)
         {
-            var termoBuscado = EF.Functions.PlainToTsQuery("portuguese", termo);
-
             return await _ctx.Ocupacao
-                .Where(h => h.SearchVector.Matches(termoBuscado) ||
+                .Where(h => h.SearchVector.Matches(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)) ||
                     EF.Functions.TrigramsSimilarity(h.Titulo, termo) >= 0.3)
                 .Include(o => o.GrupoOcupacao)
-                .OrderByDescending(h => h.SearchVector.Rank(termoBuscado))
-                .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Titulo, termo) >= 0.3)
+                .OrderByDescending(h => h.SearchVector.Rank(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)))
+                .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Titulo, termo))
                 .ToListAsync();
         }
 
-        public async Task<List<Ocupacao>> ListarPorGrupo(int grupoId)
+        public async Task<List<Ocupacao>?> ListarPorGrupo(int grupoId)
         {
-            GrupoOcupacao grupo = await _ctx.GrupoOcupacao
+            var grupo = await _ctx.GrupoOcupacao
                 .FirstOrDefaultAsync(g => g.GrupoId == grupoId);
+
+            if (grupo is null)
+                return null;
 
             return grupo.Ocupacao
                 .OrderBy(o => o.Titulo)
                 .ToList();
         }
 
-        public async Task<List<Habilidade>> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
+        public async Task<List<Habilidade>?> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
         {
-            Ocupacao ocupacao = await _ctx.Ocupacao
-            .Include(o => o.Habilidade)
-            .FirstOrDefaultAsync(o => o.OcupacaoId == ocupacaoId);
+            var ocupacao = await _ctx.Ocupacao
+                .Include(o => o.Habilidade)
+                .FirstOrDefaultAsync(o => o.OcupacaoId == ocupacaoId);
+
+            if (ocupacao is null)
+                return null;
 
             return ocupacao.Habilidade.ToList();
         }
 
-        public async Task<Ocupacao> ObterPorId(int ocupacaoId)
+        public async Task<Ocupacao?> ObterPorId(int ocupacaoId)
             => await _ctx.Ocupacao
                 .Include(o => o.GrupoOcupacao)
                 .FirstOrDefaultAsync(h => h.OcupacaoId == ocupacaoId);

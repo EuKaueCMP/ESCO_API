@@ -1,4 +1,4 @@
-namespace ESCO_API.Excptions
+namespace ESCO_API.Exceptions
 {
     public class DomainException : Exception
     {

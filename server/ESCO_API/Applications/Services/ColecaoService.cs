@@ -1,7 +1,8 @@
 using ESCO_API.Conversions;
+using ESCO_API.Domains;
 using ESCO_API.DTOs.ColecaoDTO;
-using ESCO_API.Excptions;
-using ESCO_API.Interfacies;
+using ESCO_API.Exceptions;
+using ESCO_API.Interfaces;
 
 namespace ESCO_API.Services
 {

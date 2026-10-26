@@ -1,7 +1,7 @@
 using ESCO_API.Conversions;
 using ESCO_API.DTOs.OcupacaoDTO;
-using ESCO_API.Excptions;
-using ESCO_API.Interfacies;
+using ESCO_API.Exceptions;
+using ESCO_API.Interfaces;
 using ESCO_API.Domains;
 using ESCO_API.DTOs.HabilidadeDTO;
 

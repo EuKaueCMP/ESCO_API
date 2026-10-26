@@ -1,6 +1,6 @@
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
-using ESCO_API.Interfacies;
+using ESCO_API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESCO_API.Repositories
@@ -15,19 +15,19 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Colecao>> ListarPorTermo(string termo)
         {
-            var termoBuscado = EF.Functions.PlainToTsQuery("portuguese", termo);
-
             return await _ctx.Colecao
                 .Where(c =>
-                    c.SearchVector.Matches(termoBuscado) ||
+                    c.SearchVector.Matches(
+                        EF.Functions.PlainToTsQuery("portuguese", termo)) ||
                     EF.Functions.TrigramsSimilarity(c.Nome, termo) >= 0.3)
-                .OrderByDescending(c => c.SearchVector.Rank(termoBuscado))
+                .OrderByDescending(c => c.SearchVector.Rank(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)))
                 .ThenByDescending(c =>
                     EF.Functions.TrigramsSimilarity(c.Nome, termo))
                 .ToListAsync();
         }
 
-        public async Task<Colecao> ObterPorId(int colecaoId) 
-            => await _ctx.Colecao.FirstAsync(c => c.ColecaoId == colecaoId); 
+        public async Task<Colecao?> ObterPorId(int colecaoId) 
+            => await _ctx.Colecao.FirstOrDefaultAsync(c => c.ColecaoId == colecaoId); 
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ESCO_API.Domains;
 using NpgsqlTypes;
 
-namespace ESCO_API;
+namespace ESCO_API.Domains;
 
 public partial class Colecao
 {
@@ -15,7 +14,7 @@ public partial class Colecao
 
     public string Descricao { get; set; } = null!;
 
-    public NpgsqlTsVector? SearchVector { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 
     public virtual ICollection<Habilidade> Habilidade { get; set; } = new List<Habilidade>();
 }

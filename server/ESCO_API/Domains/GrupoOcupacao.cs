@@ -16,7 +16,7 @@ public partial class GrupoOcupacao
 
     public string Descricao { get; set; } = null!;
 
-    public NpgsqlTsVector? SearchVector { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 
     public virtual ICollection<Ocupacao> Ocupacao { get; set; } = new List<Ocupacao>();
 }

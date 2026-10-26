@@ -12,14 +12,14 @@ public partial class ListarHabilidadeDto
 
     public StatusEnum StatusHabilidade { get; set; }
 
-    public NivelReutilizacaoEnum NivelReutilizacao { get; set; }
+    public NivelReutilizacaoEnum? NivelReutilizacao { get; set; }
 
-    public TipoHabilidadeEnum TipoHabilidade { get; set; }
+    public TipoHabilidadeEnum? TipoHabilidade { get; set; }
 
     public TipoConceitoEnum TipoConceito { get; set; }
 
-    public ClassificacaoHabilidadeEnum ClassificacaoHabilidade { get; set; }
+    public ClassificacaoHabilidadeEnum? ClassificacaoHabilidade { get; set; }
 
-    public string? NomesAlternativos { get; set; }
+    public List<string>? NomesAlternativos { get; set; }
 
 }
