@@ -1,6 +1,6 @@
 using ESCO_API.Domains;
 
-namespace ESCO_API.Interfacies
+namespace ESCO_API.Interfaces
 {
     public interface IColecaoRepository
     {

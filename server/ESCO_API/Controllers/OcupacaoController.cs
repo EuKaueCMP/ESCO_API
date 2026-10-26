@@ -1,7 +1,7 @@
 
 using ESCO_API.DTOs.HabilidadeDTO;
 using ESCO_API.DTOs.OcupacaoDTO;
-using ESCO_API.Excptions;
+using ESCO_API.Exceptions;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Mvc;
 

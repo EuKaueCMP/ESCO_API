@@ -1,6 +1,6 @@
 
 using ESCO_API.DTOs.ColecaoDTO;
-using ESCO_API.Excptions;
+using ESCO_API.Exceptions;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Mvc;
 

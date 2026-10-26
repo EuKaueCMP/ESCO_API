@@ -1,7 +1,7 @@
 using DotNetEnv;
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
-using ESCO_API.Interfacies;
+using ESCO_API.Interfaces;
 using ESCO_API.Repositories;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Identity;

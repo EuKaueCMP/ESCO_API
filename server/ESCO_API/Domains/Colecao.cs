@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ESCO_API.Domains;
 using NpgsqlTypes;
 
-namespace ESCO_API;
+namespace ESCO_API.Domains;
 
 public partial class Colecao
 {

@@ -1,6 +1,6 @@
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
-using ESCO_API.Interfacies;
+using ESCO_API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESCO_API.Repositories
