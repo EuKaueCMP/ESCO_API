@@ -18,14 +18,14 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Ocupacao>> ListarPorTermo(string termo)
         {
-            var termoBuscado = EF.Functions.PlainToTsQuery("portuguese", termo);
-
             return await _ctx.Ocupacao
-                .Where(h => h.SearchVector.Matches(termoBuscado) ||
+                .Where(h => h.SearchVector.Matches(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)) ||
                     EF.Functions.TrigramsSimilarity(h.Titulo, termo) >= 0.3)
                 .Include(o => o.GrupoOcupacao)
-                .OrderByDescending(h => h.SearchVector.Rank(termoBuscado))
-                .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Titulo, termo) >= 0.3)
+                .OrderByDescending(h => h.SearchVector.Rank(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)))
+                .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Titulo, termo))
                 .ToListAsync();
         }
 

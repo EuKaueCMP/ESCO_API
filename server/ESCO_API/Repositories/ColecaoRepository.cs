@@ -15,13 +15,13 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Colecao>> ListarPorTermo(string termo)
         {
-            var termoBuscado = EF.Functions.PlainToTsQuery("portuguese", termo);
-
             return await _ctx.Colecao
                 .Where(c =>
-                    c.SearchVector.Matches(termoBuscado) ||
+                    c.SearchVector.Matches(
+                        EF.Functions.PlainToTsQuery("portuguese", termo)) ||
                     EF.Functions.TrigramsSimilarity(c.Nome, termo) >= 0.3)
-                .OrderByDescending(c => c.SearchVector.Rank(termoBuscado))
+                .OrderByDescending(c => c.SearchVector.Rank(
+                    EF.Functions.PlainToTsQuery("portuguese", termo)))
                 .ThenByDescending(c =>
                     EF.Functions.TrigramsSimilarity(c.Nome, termo))
                 .ToListAsync();
