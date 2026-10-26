@@ -119,11 +119,11 @@ public partial class EscoContext : DbContext
                 .HasColumnName("descricao");
 
             entity.Property(e => e.Nome)
-                .HasColumnName("nome");
+                .HasColumnName("titulo");
 
             entity.Property(e => e.SearchVector)
                 .HasComputedColumnSql(
-                    "(setweight(to_tsvector('portuguese'::regconfig, COALESCE(nome, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))",
+                    "(setweight(to_tsvector('portuguese'::regconfig, COALESCE(titulo, ''::text)), 'A'::\"char\") || setweight(to_tsvector('portuguese'::regconfig, COALESCE(descricao, ''::text)), 'B'::\"char\"))",
                     true)
                 .HasColumnName("search_vector");
 
