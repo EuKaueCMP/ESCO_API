@@ -16,21 +16,34 @@ Env.Load();
 //?
 //? Loading connection string from .env
 var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+
 //? 
 //? Connect with database
-builder.Services.AddDbContext<EscoContext>(options => options.UseNpgsql(
-    connectionString,
-    npgsqloptions =>
-    {
-        npgsqloptions.MapEnum<ClassificacaoHabilidadeEnum>("classificacao_habilidade_enum");
-        npgsqloptions.MapEnum<NivelReutilizacaoEnum>("nivel_reutilizacao_enum");
-        npgsqloptions.MapEnum<StatusEnum>("status_enum");
-        npgsqloptions.MapEnum<TipoConceitoEnum>("tipo_conceito_enum");
-        npgsqloptions.MapEnum<TipoHabilidadeEnum>("tipo_habilidade_enum");
-        npgsqloptions.MapEnum<TipoRelacionamentoEnum>("tipo_relacionamento_enum");
-    }
-));
+builder.Services.AddDbContext<EscoContext>(options =>
+    options.UseNpgsql(
+        connectionString,
+        npgsqloptions =>
+        {
+            npgsqloptions.MapEnum<ClassificacaoHabilidadeEnum>(
+                "esco_dataset.classificacao_habilidade_enum");
 
+            npgsqloptions.MapEnum<NivelReutilizacaoEnum>(
+                "esco_dataset.nivel_reutilizacao_enum");
+
+            npgsqloptions.MapEnum<StatusEnum>(
+                "esco_dataset.status_enum");
+
+            npgsqloptions.MapEnum<TipoConceitoEnum>(
+                "esco_dataset.tipo_conceito_enum");
+
+            npgsqloptions.MapEnum<TipoHabilidadeEnum>(
+                "esco_dataset.tipo_habilidade_enum");
+
+            npgsqloptions.MapEnum<TipoRelacionamentoEnum>(
+                "esco_dataset.tipo_relacionamento_enum");
+        }
+    )
+);
 
 // Add services to the container.
 //? CRUD Colecao
