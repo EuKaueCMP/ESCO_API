@@ -1,4 +1,5 @@
 using ESCO_API.DTOs.GrupoOcupacaoDTO;
+using ESCO_API.Excptions;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ namespace ESCO_API.Controllers
             {
                 return Ok(await _service.Listar());
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -35,7 +36,7 @@ namespace ESCO_API.Controllers
             {
                 return Ok(await _service.ListarPorTermo(termo));
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -48,7 +49,7 @@ namespace ESCO_API.Controllers
             {
                 return Ok(await _service.ObterPorId(grupoId));
             }
-            catch (Exception ex)
+            catch (DomainException ex)
             {
                 return NotFound(ex.Message);
             }
