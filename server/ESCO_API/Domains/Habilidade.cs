@@ -14,7 +14,7 @@ public partial class Habilidade
 
     public string Descricao { get; set; } = null!;
 
-    public NpgsqlTsVector? SearchVector { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 
     public StatusEnum StatusHabilidade { get; set; }
 

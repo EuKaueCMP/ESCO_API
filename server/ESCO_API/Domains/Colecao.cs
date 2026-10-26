@@ -15,7 +15,7 @@ public partial class Colecao
 
     public string Descricao { get; set; } = null!;
 
-    public NpgsqlTsVector? SearchVector { get; set; }
+    public NpgsqlTsVector SearchVector { get; set; } = null!;
 
     public virtual ICollection<Habilidade> Habilidade { get; set; } = new List<Habilidade>();
 }
