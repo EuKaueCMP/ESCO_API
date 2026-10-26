@@ -7,6 +7,7 @@ using ESCO_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +75,9 @@ builder.Services.AddScoped<IOcupacaoRepository, OcupacaoRepository>();
 builder.Services.AddScoped<OcupacaoService>();
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 //? Importando o Cors policy
 builder.Services.AddCors(option =>
