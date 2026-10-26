@@ -6,6 +6,7 @@ using ESCO_API.Repositories;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +17,16 @@ Env.Load();
 //?
 //? Loading connection string from .env
 var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+{
+    SearchPath = "esco_dataset,public"
+};
 
 //? 
 //? Connect with database
 builder.Services.AddDbContext<EscoContext>(options =>
     options.UseNpgsql(
-        connectionString,
+        connectionStringBuilder.ConnectionString,
         npgsqloptions =>
         {
             npgsqloptions.MapEnum<ClassificacaoHabilidadeEnum>(
