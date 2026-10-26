@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 Env.Load();
 //?
 //? Loading connection string from .env
-var connectionString = Environment.GetEnvironmentVariable("DefaultConncetion");
+var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
 //? 
 //? Connect with database
 builder.Services.AddDbContext<EscoContext>(options => options.UseNpgsql(

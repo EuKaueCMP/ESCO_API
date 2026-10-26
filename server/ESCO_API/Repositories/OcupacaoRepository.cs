@@ -41,9 +41,11 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Habilidade>> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
         {
-            var ocupacao = await _ocupacaoRepository.ObterPorId(ocupacaoId);
-       
-            List<Habilidade> habilidades = ocupacao.Habilidade;
+            Ocupacao ocupacao = await _ctx.Ocupacao
+            .Include(o => o.Habilidade)
+            .FirstOrDefaultAsync(o => o.OcupacaoId == ocupacaoId);
+
+            return ocupacao.Habilidade.ToList();
         }
 
         public async Task<Ocupacao> ObterPorId(int ocupacaoId)

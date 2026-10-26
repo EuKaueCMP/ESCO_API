@@ -1,4 +1,5 @@
 
+using ESCO_API.DTOs.HabilidadeDTO;
 using ESCO_API.DTOs.OcupacaoDTO;
 using ESCO_API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace ESCO_API.Controllers
         {
             try
             {
-                return Ok(await _service.ListarPorOcupacaoId(ocupacaoId));
+                return Ok(await _service.ListarHabilidadesPorOcupacaoId(ocupacaoId));
             }
             catch (Exception ex)
             {

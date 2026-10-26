@@ -2,6 +2,8 @@ using ESCO_API.Conversions;
 using ESCO_API.DTOs.OcupacaoDTO;
 using ESCO_API.Excptions;
 using ESCO_API.Interfacies;
+using ESCO_API.Domains;
+using ESCO_API.DTOs.HabilidadeDTO;
 
 namespace ESCO_API.Services
 {
