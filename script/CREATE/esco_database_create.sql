@@ -39,15 +39,19 @@ CREATE TABLE grupo_ocupacao
 	grupo_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
 	codigo VARCHAR(20) UNIQUE NOT NULL,
-	nome TEXT NOT NULL,
-	descricao TEXT NOT NULL
-	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id),
+	titulo TEXT NOT NULL,
+	descricao TEXT NOT NULL,
+
 	search_vector TSVECTOR
 		GENERATED ALWAYS AS(
 			setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
 			setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
 		) STORED
 );
+
+CREATE INDEX idx_grupo_ocupacao_fts
+	ON grupo_ocupacao
+	USING GIN (search_vector);
 
 
 CREATE TABLE ocupacao
@@ -58,7 +62,7 @@ CREATE TABLE ocupacao
 	descricao TEXT NOT NULL,
 	status status_enum NOT NULL,
 	nomes_alternativos JSONB,
-	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id)
+	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id),
 	search_vector TSVECTOR
 		GENERATED ALWAYS AS(
 			setweight(to_tsvector('portuguese', coalesce(titulo, '')), 'A') ||
@@ -121,7 +125,6 @@ CREATE INDEX idx_habilidade_fts
 	USING GIN (search_vector);
 
 
-
 CREATE TABLE ocupacao_habilidade
 (
 	ocupacao_id INTEGER NOT NULL REFERENCES ocupacao(ocupacao_id),
@@ -130,7 +133,6 @@ CREATE TABLE ocupacao_habilidade
 	
 	PRIMARY KEY (ocupacao_id, habilidade_id)
 );
-
 
 
 CREATE TABLE hierarquia_habilidade
@@ -150,10 +152,14 @@ CREATE TABLE colecao
 	descricao TEXT NOT NULL,
 	search_vector TSVECTOR
 	GENERATED ALWAYS AS(
-		setweight(to_tsvector('portuguese', coalesce(nome, ''), 'A') ||
-		setweight(to_tsvector('portuguese', coalesce(descricao, ''), 'B')
+		setweight(to_tsvector('portuguese', coalesce(nome, '')), 'A') ||
+		setweight(to_tsvector('portuguese', coalesce(descricao, '')), 'B')
 	) STORED
 );
+
+CREATE INDEX idx_colecao_fts
+	ON colecao
+	USING GIN(search_vector);
 
 CREATE TABLE habilidade_colecao
 (
