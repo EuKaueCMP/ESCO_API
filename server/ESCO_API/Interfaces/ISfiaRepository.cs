@@ -8,5 +8,6 @@ namespace ESCO_API.Interfaces
         public Task<SfiaAtributo?> ObterAtributo(string slug);
         public Task<List<SfiaView>> ListarViews();
         public Task<SfiaView?> ObterView(int viewId);
+        public Task<List<SfiaAtributoNivel>> ListarFrasesAtributo(short nivel);
     }
 }

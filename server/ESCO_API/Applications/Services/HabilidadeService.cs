@@ -10,7 +10,12 @@ namespace ESCO_API.Services
     {
         private readonly IHabilidadeRepository _repository;
         
-        public HabilidadeService(IHabilidadeRepository repository) => _repository = repository;
+        private readonly ISfiaRepository _sfia;
+        public HabilidadeService(IHabilidadeRepository repository, ISfiaRepository sfia)
+        {
+            _repository = repository;
+            _sfia = sfia;
+        }
 
         public async Task<List<ListarHabilidadeDto>> Listar()
         {
@@ -89,6 +94,10 @@ namespace ESCO_API.Services
             if (descritores.Count == 0)
                 throw new DomainException("Esta habilidade não possui descritores de nível publicados.");
 
+            Dictionary<short, List<SfiaAtributoNivel>> frasesPorNivel = new();
+            foreach (short nivel in descritores.Select(d => d.Nivel).Distinct())
+                frasesPorNivel[nivel] = await _sfia.ListarFrasesAtributo(nivel);
+
             return descritores
                 .Select(d => new ListarNiveisPorHabilidadeDto
                 {
@@ -96,9 +105,28 @@ namespace ESCO_API.Services
                     NomeNivel = d.NivelHabilidade.Nome,
                     DescricaoNivel = d.NivelHabilidade.Descricao,
                     Descritor = d.Descricao,
+                    Rubrica = MontarRubrica(d, frasesPorNivel.TryGetValue(d.Nivel, out List<SfiaAtributoNivel>? frases) ? frases : new()),
                     Origem = d.Origem
                 })
                 .ToList();
+        }
+
+        /// <summary>Monta a rubrica de avaliacao do nivel: frase-chave do descritor + expectativas dos atributos genericos.</summary>
+        private string MontarRubrica(NivelHabilidadeDescritor d, List<SfiaAtributoNivel> frases)
+        {
+            string fraseSkill = d.Descricao;
+            int ponto = fraseSkill.IndexOf('.');
+            if (ponto > 0 && ponto < fraseSkill.Length - 1)
+                fraseSkill = fraseSkill[..(ponto + 1)];
+
+            var partes = new List<string> { fraseSkill.Trim() };
+            foreach (SfiaAtributoNivel f in frases.OrderBy(f => f.Slug))
+            {
+                string? texto = f.DescricaoPt ?? f.DescricaoEn;
+                if (string.IsNullOrWhiteSpace(texto)) continue;
+                partes.Add($"{(f.Atributo?.NomePt ?? f.Atributo?.NomeEn ?? f.Slug)}: {texto.Trim()}");
+            }
+            return string.Join(" \u2022 ", partes);
         }
     }
 }

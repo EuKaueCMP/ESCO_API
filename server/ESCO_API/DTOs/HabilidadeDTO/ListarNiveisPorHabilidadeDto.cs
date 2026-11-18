@@ -12,4 +12,7 @@ public class ListarNiveisPorHabilidadeDto
     public string Descritor { get; set; } = null!;
 
     public string Origem { get; set; } = "sintetizado";
+
+    /// <summary>Rubrica de avaliacao: como demonstrar proficiencia neste nivel.</summary>
+    public string? Rubrica { get; set; }
 }

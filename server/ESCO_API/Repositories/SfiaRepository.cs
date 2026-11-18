@@ -46,5 +46,12 @@ namespace ESCO_API.Repositories
 
             return view;
         }
+   
+        public async Task<List<SfiaAtributoNivel>> ListarFrasesAtributo(short nivel)
+            => await _ctx.SfiaAtributoNivel
+                .Include(n => n.Atributo)
+                .Where(n => n.Nivel == nivel
+                    && (n.Slug == "autonomy" || n.Slug == "complexity" || n.Slug == "influence"))
+                .ToListAsync();
     }
 }
