@@ -75,6 +75,9 @@ builder.Services.AddScoped<HabilidadeService>();
 builder.Services.AddScoped<IOcupacaoRepository, OcupacaoRepository>();
 builder.Services.AddScoped<OcupacaoService>();
 
+builder.Services.AddScoped<ISfiaRepository, SfiaRepository>();
+builder.Services.AddScoped<SfiaService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

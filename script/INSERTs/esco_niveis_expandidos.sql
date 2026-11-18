@@ -218,6 +218,71 @@ WHERE h.codigo IN (SELECT codigo FROM _sfia)
 GROUP BY d.habilidade_id
   HAVING d.habilidade_id NOT IN (SELECT habilidade_id FROM _faixa);
 
+-- skills isoladas (sem vinculo): inferem faixa pela hierarquia
+-- pai: uniao da banda dos filhos; filho: banda do pai (em cascata)
+INSERT INTO _faixa
+SELECT hh.habilidade_pai, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_filha
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_pai
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_pai
+  HAVING hh.habilidade_pai NOT IN (SELECT habilidade_id FROM _faixa);
+
+INSERT INTO _faixa
+SELECT hh.habilidade_filha, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_pai
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_filha
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_filha
+  HAVING hh.habilidade_filha NOT IN (SELECT habilidade_id FROM _faixa);
+
+-- rodadas adicionais de cascata (grupos isolados profundos)
+
+INSERT INTO _faixa
+SELECT hh.habilidade_pai, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_filha
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_pai
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_pai
+  HAVING hh.habilidade_pai NOT IN (SELECT habilidade_id FROM _faixa);
+
+INSERT INTO _faixa
+SELECT hh.habilidade_filha, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_pai
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_filha
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_filha
+  HAVING hh.habilidade_filha NOT IN (SELECT habilidade_id FROM _faixa);
+
+INSERT INTO _faixa
+SELECT hh.habilidade_pai, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_filha
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_pai
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_pai
+  HAVING hh.habilidade_pai NOT IN (SELECT habilidade_id FROM _faixa);
+
+INSERT INTO _faixa
+SELECT hh.habilidade_filha, MIN(f.nivel_min), MAX(f.nivel_max)
+FROM esco_dataset.hierarquia_habilidade hh
+JOIN _faixa f ON f.habilidade_id = hh.habilidade_pai
+JOIN esco_dataset.habilidade h ON h.habilidade_id = hh.habilidade_filha
+WHERE h.tipo_conceito = 'habilidade'
+  AND NOT EXISTS (SELECT 1 FROM _sfia s WHERE s.codigo = h.codigo)
+GROUP BY hh.habilidade_filha
+  HAVING hh.habilidade_filha NOT IN (SELECT habilidade_id FROM _faixa);
+
+
 -- ----------------------------- niveis + descricao por vinculo -----------------------------
 -- nivel: faltante preenchido com a heuristica clampada na faixa (existentes preservados);
 -- descricao: texto de mercado por vinculo (ocupacao x habilidade x nivel)

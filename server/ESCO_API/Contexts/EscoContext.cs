@@ -19,6 +19,14 @@ public partial class EscoContext : DbContext
     public virtual DbSet<NivelHabilidadeDescritor> NivelHabilidadeDescritor { get; set; }
 
     public virtual DbSet<Ocupacao> Ocupacao { get; set; }
+
+    public virtual DbSet<SfiaAtributo> SfiaAtributo { get; set; }
+
+    public virtual DbSet<SfiaAtributoNivel> SfiaAtributoNivel { get; set; }
+
+    public virtual DbSet<SfiaView> SfiaView { get; set; }
+
+    public virtual DbSet<SfiaViewHabilidade> SfiaViewHabilidade { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -309,6 +317,88 @@ public partial class EscoContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.HabilidadeId)
                 .HasConstraintName("nivel_habilidade_descritor_habilidade_id_fkey");
+        });
+
+        // Atributo generico SFIA
+        modelBuilder.Entity<SfiaAtributo>(entity =>
+        {
+            entity.ToTable("sfia_atributo", "esco_dataset");
+
+            entity.HasKey(e => e.Slug)
+                .HasName("sfia_atributo_pkey");
+
+            entity.Property(e => e.Slug).HasColumnName("slug");
+            entity.Property(e => e.Codigo).HasColumnName("codigo");
+            entity.Property(e => e.NomeEn).HasColumnName("nome_en");
+            entity.Property(e => e.NomePt).HasColumnName("nome_pt");
+        });
+
+        modelBuilder.Entity<SfiaAtributoNivel>(entity =>
+        {
+            entity.ToTable("sfia_atributo_nivel", "esco_dataset");
+
+            entity.HasKey(e => new { e.Slug, e.Nivel })
+                .HasName("sfia_atributo_nivel_pkey");
+
+            entity.Property(e => e.Slug).HasColumnName("slug");
+            entity.Property(e => e.Nivel).HasColumnName("nivel");
+            entity.Property(e => e.DescricaoEn).HasColumnName("descricao_en");
+            entity.Property(e => e.DescricaoPt).HasColumnName("descricao_pt");
+
+            entity.HasOne(e => e.Atributo)
+                .WithMany(a => a.Niveis)
+                .HasForeignKey(e => e.Slug)
+                .HasConstraintName("sfia_atributo_nivel_slug_fkey");
+
+            entity.HasOne(e => e.NivelHabilidade)
+                .WithMany()
+                .HasForeignKey(e => e.Nivel)
+                .HasConstraintName("sfia_atributo_nivel_nivel_fkey");
+        });
+
+        // View SFIA
+        modelBuilder.Entity<SfiaView>(entity =>
+        {
+            entity.ToTable("sfia_view", "esco_dataset");
+
+            entity.HasKey(e => e.ViewId)
+                .HasName("sfia_view_pkey");
+
+            entity.HasIndex(e => e.Caminho, "sfia_view_caminho_key")
+                .IsUnique();
+
+            entity.Property(e => e.ViewId)
+                .HasColumnName("view_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.Caminho).HasColumnName("caminho");
+            entity.Property(e => e.Slug).HasColumnName("slug");
+            entity.Property(e => e.SlugPai).HasColumnName("slug_pai");
+            entity.Property(e => e.NomeEn).HasColumnName("nome_en");
+            entity.Property(e => e.NomePt).HasColumnName("nome_pt");
+            entity.Property(e => e.Profundidade).HasColumnName("profundidade");
+        });
+
+        modelBuilder.Entity<SfiaViewHabilidade>(entity =>
+        {
+            entity.ToTable("sfia_view_habilidade", "esco_dataset");
+
+            entity.HasKey(e => new { e.Caminho, e.HabilidadeId })
+                .HasName("sfia_view_habilidade_pkey");
+
+            entity.Property(e => e.Caminho).HasColumnName("caminho");
+            entity.Property(e => e.HabilidadeId).HasColumnName("habilidade_id");
+
+            entity.HasOne(e => e.View)
+                .WithMany(v => v.Habilidades)
+                .HasForeignKey(e => e.Caminho)
+                .HasPrincipalKey(v => v.Caminho)
+                .HasConstraintName("sfia_view_habilidade_caminho_fkey");
+
+            entity.HasOne(e => e.Habilidade)
+                .WithMany()
+                .HasForeignKey(e => e.HabilidadeId)
+                .HasConstraintName("sfia_view_habilidade_habilidade_id_fkey");
         });
 
         // Ocupação

@@ -60,3 +60,39 @@ ALTER TABLE nivel_habilidade_descritor
 
 ALTER TABLE ocupacao_habilidade
     ADD COLUMN IF NOT EXISTS descricao TEXT;
+
+-- arvore de views SFIA (dominios, sub-views, folhas) + atributos genericos x niveis
+CREATE TABLE IF NOT EXISTS sfia_atributo
+(
+    slug TEXT PRIMARY KEY,
+    codigo TEXT,
+    nome_en TEXT,
+    nome_pt TEXT
+);
+
+CREATE TABLE IF NOT EXISTS sfia_atributo_nivel
+(
+    slug TEXT NOT NULL REFERENCES sfia_atributo (slug) ON DELETE CASCADE,
+    nivel SMALLINT NOT NULL REFERENCES nivel_habilidade (nivel) ON DELETE CASCADE,
+    descricao_en TEXT,
+    descricao_pt TEXT,
+    PRIMARY KEY (slug, nivel)
+);
+
+CREATE TABLE IF NOT EXISTS sfia_view
+(
+    view_id SERIAL PRIMARY KEY,
+    caminho TEXT NOT NULL UNIQUE,
+    slug TEXT,
+    slug_pai TEXT,
+    nome_en TEXT,
+    nome_pt TEXT,
+    profundidade SMALLINT
+);
+
+CREATE TABLE IF NOT EXISTS sfia_view_habilidade
+(
+    caminho TEXT NOT NULL REFERENCES sfia_view (caminho) ON DELETE CASCADE,
+    habilidade_id INTEGER NOT NULL REFERENCES habilidade (habilidade_id) ON DELETE CASCADE,
+    PRIMARY KEY (caminho, habilidade_id)
+);
