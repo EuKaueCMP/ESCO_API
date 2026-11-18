@@ -4,6 +4,7 @@ using ESCO_API.Exceptions;
 using ESCO_API.Interfaces;
 using ESCO_API.Domains;
 using ESCO_API.DTOs.HabilidadeDTO;
+using ESCO_API.Repositories;
 
 namespace ESCO_API.Services
 {
@@ -69,6 +70,49 @@ namespace ESCO_API.Services
                 ?? throw new DomainException("Nenhuma ocupação encontrada.");
 
             return DomainToDto.OcupacaoToDto(ocupacao);
+        }
+
+        public async Task<ListarTrilhaPorOcupacaoDto> ListarTrilhaPorOcupacaoId(int ocupacaoId)
+        {
+            if (ocupacaoId <= 0)
+                throw new DomainException("Insira o id de uma ocupação.");
+
+            Ocupacao ocupacao = await _repository.ObterPorId(ocupacaoId)
+                ?? throw new DomainException("Nenhuma ocupação encontrada.");
+
+            List<ListarHabilidadePorOcupacaoDto> todas = await _repository.ListarHabilidadesPorOcupacaoId(ocupacaoId)
+                ?? throw new DomainException("Nenhuma ocupação encontrada.");
+
+            List<ListarHabilidadePorOcupacaoDto> essenciais = todas
+                .Where(h => h.TipoRelacionamento == "essencial")
+                .OrderBy(h => h.NivelHabilidade ?? 0)
+                .ToList();
+
+            List<OcupacaoRepository.ProximaOcupacaoTrilha> proximas = await _repository.ListarProximasOcupacoes(ocupacaoId) ?? new();
+
+            decimal? nivelMedio = essenciais.Count > 0
+                ? Math.Round(essenciais.Where(h => h.NivelHabilidade.HasValue)
+                    .Select(h => (decimal)h.NivelHabilidade!.Value)
+                    .DefaultIfEmpty(0).Average(), 1)
+                : null;
+
+            return new ListarTrilhaPorOcupacaoDto
+            {
+                OcupacaoId = ocupacaoId,
+                Titulo = ocupacao.Titulo,
+                NivelMedio = nivelMedio,
+                HabilidadesEssenciais = essenciais,
+                ProximasOcupacoes = proximas
+                    .Select(p => new ListarProximaOcupacaoDto
+                    {
+                        OcupacaoId = p.OcupacaoId,
+                        Titulo = p.Titulo,
+                        Compartilhadas = p.Compartilhadas,
+                        NivelMedioDestino = p.NivelMedioDestino,
+                        HabilidadesFaltantes = p.HabilidadesFaltantes
+                    })
+                    .ToList()
+            };
         }
     }
 }

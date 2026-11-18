@@ -93,6 +93,26 @@ namespace ESCO_API.Controllers
             }
         }
 
+        /// <summary>Trilha de carreira da ocupação: skills essenciais ordenadas por nível e próximas ocupações.</summary>
+        /// <param name="ocupacaoId">Id da ocupação.</param>
+        /// <returns>Skills essenciais (peso 5) por nível, ocupações destino com skills compartilhadas em nível superior e o gap de habilidades.</returns>
+        /// <response code="200">Trilha retornada com sucesso.</response>
+        /// <response code="404">Ocupação não encontrada.</response>
+        [HttpGet("ocupacaoId/{ocupacaoId}/trilha")]
+        [ProducesResponseType(typeof(ListarTrilhaPorOcupacaoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ListarTrilhaPorOcupacaoDto>> ListarTrilhaPorOcupacaoId(int ocupacaoId)
+        {
+            try
+            {
+                return Ok(await _service.ListarTrilhaPorOcupacaoId(ocupacaoId));
+            }
+            catch (DomainException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         /// <summary>Obtém uma ocupação pelo seu id.</summary>
         /// <param name="ocupacaoId">Id da ocupação.</param>
         /// <returns>Dados da ocupação, incluindo grupo ocupacional e nomes alternativos.</returns>

@@ -108,6 +108,63 @@ namespace ESCO_API.Repositories
             public string? DescricaoNivel { get; set; }
         }
 
+        /// <summary>Ocupacao seguinte na trilha de carreira (SQL bruto, agregado sobre skills essenciais).</summary>
+        public class ProximaOcupacaoTrilha
+        {
+            public int OcupacaoId { get; set; }
+
+            public string Titulo { get; set; } = null!;
+
+            public int Compartilhadas { get; set; }
+
+            public decimal NivelMedioDestino { get; set; }
+
+            public string? HabilidadesFaltantes { get; set; }
+        }
+
+        public async Task<List<ProximaOcupacaoTrilha>?> ListarProximasOcupacoes(int ocupacaoId)
+        {
+            bool existe = await _ctx.Ocupacao.AnyAsync(o => o.OcupacaoId == ocupacaoId);
+
+            if (!existe)
+                return null;
+
+            return await _ctx.Database
+                .SqlQuery<ProximaOcupacaoTrilha>($"""
+                    SELECT o.ocupacao_id AS "OcupacaoId",
+                           o.titulo AS "Titulo",
+                           count(DISTINCT vh.habilidade_id) AS "Compartilhadas",
+                           round(avg(vh.nivel_habilidade)::numeric, 1) AS "NivelMedioDestino",
+                           (SELECT string_agg(f.nome, ' | ') FROM (
+                                SELECT h2.nome
+                                FROM esco_dataset.ocupacao_habilidade vh2
+                                JOIN esco_dataset.habilidade h2 ON h2.habilidade_id = vh2.habilidade_id
+                                WHERE vh2.ocupacao_id = o.ocupacao_id
+                                  AND vh2.tipo_relacionamento = 'essencial'
+                                  AND vh2.habilidade_id NOT IN (
+                                      SELECT habilidade_id FROM esco_dataset.ocupacao_habilidade
+                                      WHERE ocupacao_id = {ocupacaoId})
+                                ORDER BY vh2.nivel_habilidade
+                                LIMIT 5
+                           ) f) AS "HabilidadesFaltantes"
+                    FROM esco_dataset.ocupacao_habilidade vh
+                    JOIN esco_dataset.ocupacao o ON o.ocupacao_id = vh.ocupacao_id
+                    JOIN (SELECT habilidade_id
+                          FROM esco_dataset.ocupacao_habilidade
+                          WHERE ocupacao_id = {ocupacaoId} AND tipo_relacionamento = 'essencial') e
+                         ON e.habilidade_id = vh.habilidade_id
+                    WHERE vh.ocupacao_id <> {ocupacaoId}
+                      AND vh.tipo_relacionamento = 'essencial'
+                    GROUP BY o.ocupacao_id, o.titulo
+                    HAVING avg(vh.nivel_habilidade) > (SELECT avg(nivel_habilidade) + 0.25
+                                                       FROM esco_dataset.ocupacao_habilidade
+                                                       WHERE ocupacao_id = {ocupacaoId} AND peso_relevancia = 5)
+                    ORDER BY count(DISTINCT vh.habilidade_id) DESC
+                    LIMIT 8
+                    """)
+                .ToListAsync();
+        }
+
         public async Task<Ocupacao?> ObterPorId(int ocupacaoId)
             => await _ctx.Ocupacao
                 .Include(o => o.GrupoOcupacao)
