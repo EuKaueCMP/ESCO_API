@@ -3,6 +3,8 @@ import { apiGet } from "@/lib/api";
 import type { HabilidadeTermo, ResumoClassificacao, SfiaView } from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import CardHabilidade from "@/components/CardHabilidade/CardHabilidade";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { ITENS_POR_PAGINA, fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -23,20 +25,12 @@ function normalizar(tipo?: string): Filtro {
   return "todas";
 }
 
-function urlBase(termo: string | undefined, filtro: Filtro) {
-  const params = new URLSearchParams();
-  if (termo) params.set("termo", termo);
-  if (filtro !== "todas") params.set("tipo", filtro);
-  const qs = params.toString();
-  return `/habilidades${qs ? `?${qs}` : ""}`;
-}
-
 export default async function Habilidades({
   searchParams,
 }: {
-  searchParams: Promise<{ termo?: string; tipo?: string }>;
+  searchParams: Promise<{ termo?: string; tipo?: string; pagina?: string }>;
 }) {
-  const { termo, tipo } = await searchParams;
+  const { termo, tipo, pagina } = await searchParams;
   const filtro = normalizar(tipo);
 
   const resumo = await apiGet<ResumoClassificacao>("/habilidade/resumo");
@@ -47,19 +41,32 @@ export default async function Habilidades({
       : [];
 
   let resultados: HabilidadeTermo[] | null = null;
+  let total = 0;
+  let totalPaginas = 1;
+  let paginaAtual = 1;
+
   if (termo) {
     const qs = filtro === "todas" ? "" : `?classificacao=${filtro}`;
-    resultados =
+    const todos =
       (await apiGet<HabilidadeTermo[]>(
         `/habilidade/termo/${encodeURIComponent(termo)}${qs}`,
       )) ?? [];
+    total = todos.length;
+    totalPaginas = totalDePaginas(total);
+    paginaAtual = paginaValida(pagina, totalPaginas);
+    resultados = fatiar(todos, paginaAtual);
   } else if (filtro !== "todas") {
+    total = (filtro === "hard" ? resumo?.hardSkill : resumo?.softSkill) ?? 0;
+    totalPaginas = totalDePaginas(total);
+    paginaAtual = paginaValida(pagina, totalPaginas);
     resultados =
-      (await apiGet<HabilidadeTermo[]>(`/habilidade/classificacao/${filtro}?limite=60`)) ?? [];
+      (await apiGet<HabilidadeTermo[]>(
+        `/habilidade/classificacao/${filtro}?limite=${ITENS_POR_PAGINA}&pagina=${paginaAtual}`,
+      )) ?? [];
   }
 
-  const totalFiltro =
-    filtro === "hard" ? resumo?.hardSkill : filtro === "soft" ? resumo?.softSkill : undefined;
+  const tituloLista =
+    filtro === "soft" ? "Soft skills" : filtro === "hard" ? "Hard skills" : "Resultados";
 
   return (
     <div className="container">
@@ -87,7 +94,10 @@ export default async function Habilidades({
             return (
               <Link
                 key={aba.valor}
-                href={urlBase(termo, aba.valor)}
+                href={hrefCom("/habilidades", {
+                  termo,
+                  tipo: aba.valor === "todas" ? undefined : aba.valor,
+                })}
                 className={`${styles.aba} ${ativa ? styles.abaAtiva : ""}`}
                 role="tab"
                 aria-selected={ativa}
@@ -105,13 +115,10 @@ export default async function Habilidades({
       {resultados && (
         <>
           <div className={styles.cabecalhoSecao}>
-            <h2 className={styles.secaoTitulo}>
-              {termo ? "Resultados" : filtro === "soft" ? "Soft skills" : "Hard skills"}
-            </h2>
+            <h2 className={styles.secaoTitulo}>{tituloLista}</h2>
             <span className={styles.secaoMeta}>
-              {termo
-                ? `${resultados.length} ${resultados.length === 1 ? "verbete" : "verbetes"}`
-                : `${resultados.length} de ${(totalFiltro ?? 0).toLocaleString("pt-BR")} · mais relevantes`}
+              {total.toLocaleString("pt-BR")} {total === 1 ? "verbete" : "verbetes"} · página{" "}
+              {paginaAtual} de {totalPaginas}
             </span>
           </div>
           {resultados.length === 0 ? (
@@ -123,17 +130,22 @@ export default async function Habilidades({
             </div>
           ) : (
             <div className="grid-cards">
-              {resultados.slice(0, termo ? 30 : 60).map((h) => (
+              {resultados.map((h) => (
                 <CardHabilidade key={h.habilidadeId} habilidade={h} />
               ))}
             </div>
           )}
-          {!termo && filtro !== "todas" && (
-            <p className={styles.nota}>
-              Exibindo as {resultados.length} mais relevantes. Use a busca para encontrar uma
-              habilidade específica dentro de {filtro === "soft" ? "soft" : "hard"} skills.
-            </p>
-          )}
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            hrefPagina={(n) =>
+              hrefCom("/habilidades", {
+                termo,
+                tipo: filtro === "todas" ? undefined : filtro,
+                pagina: n,
+              })
+            }
+          />
         </>
       )}
 

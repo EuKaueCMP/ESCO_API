@@ -4,14 +4,23 @@ import { apiGet } from "@/lib/api";
 import type { GrupoOcupacao, Mercado, OcupacaoHabilidades, Ocupacao, Trilha } from "@/lib/tipagem";
 import BarrasSalario from "@/components/BarrasSalario/BarrasSalario";
 import BadgeNivel from "@/components/BadgeNivel/BadgeNivel";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
-export default async function OcupacaoPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function OcupacaoPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ pskills?: string }>;
+}) {
   const { id } = await params;
+  const { pskills } = await searchParams;
   const ocupacaoId = Number(id);
   if (!Number.isFinite(ocupacaoId)) notFound();
 
@@ -33,6 +42,9 @@ export default async function OcupacaoPage({ params }: { params: Promise<{ id: s
   const softDaOcupacao = (vinculos ?? []).filter(
     (v) => v.classificacaoHabilidade === "softskill",
   ).length;
+  const totalPaginasSkills = totalDePaginas(essenciais.length);
+  const paginaSkills = paginaValida(pskills, totalPaginasSkills);
+  const essenciaisVisiveis = fatiar(essenciais, paginaSkills);
   const topSkills = (mercado?.habilidades ?? []).slice(0, 10);
   const inicial = mercado?.salarios?.[0];
 
@@ -144,14 +156,19 @@ export default async function OcupacaoPage({ params }: { params: Promise<{ id: s
             <h2 className={styles.secaoTitulo}>Habilidades da ocupação</h2>
             <span className={styles.secaoMeta}>
               {essenciais.length} essenciais · {complementares.length} complementares ·{" "}
-              {softDaOcupacao} soft
+              {softDaOcupacao} soft · página {paginaSkills} de {totalPaginasSkills}
             </span>
           </div>
           <div className={styles.skills}>
-            {essenciais.map((v) => (
+            {essenciaisVisiveis.map((v) => (
               <SkillVinculo key={v.habilidadeId} vinculo={v} />
             ))}
           </div>
+          <Paginacao
+            paginaAtual={paginaSkills}
+            totalPaginas={totalPaginasSkills}
+            hrefPagina={(n) => hrefCom(`/ocupacoes/${ocupacaoId}`, { pskills: n })}
+          />
 
           {complementares.length > 0 && (
             <details className={`acordeao ${styles.complementares}`}>

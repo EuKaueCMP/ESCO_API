@@ -35,14 +35,6 @@
 
 .abaAtiva .abaContagem { color: var(--rosa); }
 
-.nota {
-  margin-top: 20px;
-  font-family: var(--fonte-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.05em;
-  color: var(--texto-3);
-}
-
 .cabecalhoSecao {
   display: flex;
   align-items: baseline;

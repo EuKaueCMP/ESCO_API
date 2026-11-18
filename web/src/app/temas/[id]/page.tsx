@@ -3,12 +3,21 @@ import { notFound } from "next/navigation";
 import { apiGet } from "@/lib/api";
 import type { SfiaView, SfiaViewDetalhe } from "@/lib/tipagem";
 import CardHabilidade from "@/components/CardHabilidade/CardHabilidade";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function Tema({ params }: { params: Promise<{ id: string }> }) {
+export default async function Tema({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ pagina?: string }>;
+}) {
   const { id } = await params;
+  const { pagina } = await searchParams;
   const viewId = Number(id);
   if (!Number.isFinite(viewId)) notFound();
 
@@ -18,6 +27,11 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
   const views = (await apiGet<SfiaView[]>("/sfia/view")) ?? [];
   const view = detalhe.view;
   const filhos = views.filter((v) => v.slugPai === view.caminho);
+
+  const totalSkills = detalhe.habilidades.length;
+  const totalPaginas = totalDePaginas(totalSkills);
+  const paginaAtual = paginaValida(pagina, totalPaginas);
+  const habilidades = fatiar(detalhe.habilidades, paginaAtual);
 
   const migalha: { nome: string; id: number | null }[] = [{ nome: "Temas", id: null }];
   let pai = views.find((v) => v.caminho === view.slugPai);
@@ -54,8 +68,8 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
         </span>
         <h1 className="titulo-pagina">{view.nome}</h1>
         <p className="subtitulo-pagina">
-          {detalhe.habilidades.length > 0
-            ? `${detalhe.habilidades.length} habilidades curadas neste tema${filhos.length ? ` · ${filhos.length} sub-temas` : ""}.`
+          {totalSkills > 0
+            ? `${totalSkills} habilidades curadas neste tema${filhos.length ? ` · ${filhos.length} sub-temas` : ""}.`
             : "Este tema se abre em sub-temas — nenhuma habilidade listada diretamente."}
         </p>
       </div>
@@ -81,14 +95,16 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
         </section>
       )}
 
-      {detalhe.habilidades.length > 0 && (
+      {totalSkills > 0 && (
         <section>
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Habilidades</h2>
-            <span className={styles.secaoMeta}>cada uma com descritores de nível</span>
+            <span className={styles.secaoMeta}>
+              {totalSkills} verbetes · página {paginaAtual} de {totalPaginas}
+            </span>
           </div>
           <div className="grid-cards">
-            {detalhe.habilidades.map((h) => (
+            {habilidades.map((h) => (
               <CardHabilidade
                 key={h.habilidadeId}
                 habilidade={{
@@ -100,6 +116,11 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
               />
             ))}
           </div>
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            hrefPagina={(n) => hrefCom(`/temas/${viewId}`, { pagina: n })}
+          />
         </section>
       )}
     </div>

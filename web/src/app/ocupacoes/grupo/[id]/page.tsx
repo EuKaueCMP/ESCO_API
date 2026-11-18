@@ -3,12 +3,21 @@ import { notFound } from "next/navigation";
 import { apiGet } from "@/lib/api";
 import type { GrupoOcupacao, Ocupacao } from "@/lib/tipagem";
 import CardOcupacao from "@/components/CardOcupacao/CardOcupacao";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function GrupoOcupacaoPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function GrupoOcupacaoPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ pagina?: string }>;
+}) {
   const { id } = await params;
+  const { pagina } = await searchParams;
   const grupoId = Number(id);
   if (!Number.isFinite(grupoId)) notFound();
 
@@ -20,6 +29,11 @@ export default async function GrupoOcupacaoPage({ params }: { params: Promise<{ 
   const grupo = (grupos ?? []).find((g) => g.grupoId === grupoId);
   if (!grupo) notFound();
 
+  const todas = ocupacoes ?? [];
+  const totalPaginas = totalDePaginas(todas.length);
+  const paginaAtual = paginaValida(pagina, totalPaginas);
+  const lista = fatiar(todas, paginaAtual);
+
   return (
     <div className="container">
       <div className={styles.cabeca}>
@@ -30,20 +44,28 @@ export default async function GrupoOcupacaoPage({ params }: { params: Promise<{ 
         </div>
         <h1 className="titulo-pagina">{grupo.nome}</h1>
         <p className="subtitulo-pagina">
-          {ocupacoes?.length ?? 0} ocupações classificadas neste grupo.
+          {todas.length} {todas.length === 1 ? "ocupação classificada" : "ocupações classificadas"}{" "}
+          neste grupo · página {paginaAtual} de {totalPaginas}.
         </p>
       </div>
-      {(ocupacoes ?? []).length === 0 ? (
+      {lista.length === 0 ? (
         <div className="vazio">
           <strong>Sem ocupações listadas</strong>
           Este grupo não possui ocupações mapeadas.
         </div>
       ) : (
-        <div className="grid-cards">
-          {ocupacoes!.map((o) => (
-            <CardOcupacao key={o.ocupacaoId} ocupacao={o} />
-          ))}
-        </div>
+        <>
+          <div className="grid-cards">
+            {lista.map((o) => (
+              <CardOcupacao key={o.ocupacaoId} ocupacao={o} />
+            ))}
+          </div>
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            hrefPagina={(n) => hrefCom(`/ocupacoes/grupo/${grupoId}`, { pagina: n })}
+          />
+        </>
       )}
     </div>
   );

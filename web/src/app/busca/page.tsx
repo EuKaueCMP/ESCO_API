@@ -2,6 +2,8 @@ import Link from "next/link";
 import { apiGet } from "@/lib/api";
 import type { ResultadoBusca } from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -10,12 +12,15 @@ export const metadata = { title: "Busca" };
 export default async function Busca({
   searchParams,
 }: {
-  searchParams: Promise<{ termo?: string }>;
+  searchParams: Promise<{ termo?: string; pagina?: string }>;
 }) {
-  const { termo } = await searchParams;
-  const resultados = termo
+  const { termo, pagina } = await searchParams;
+  const todos = termo
     ? (await apiGet<ResultadoBusca[]>(`/busca?termo=${encodeURIComponent(termo)}`)) ?? []
     : [];
+  const totalPaginas = totalDePaginas(todos.length);
+  const paginaAtual = paginaValida(pagina, totalPaginas);
+  const resultados = fatiar(todos, paginaAtual);
 
   return (
     <div className="container">
@@ -33,7 +38,8 @@ export default async function Busca({
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>“{termo}”</h2>
             <span className={styles.secaoMeta}>
-              {resultados.length} {resultados.length === 1 ? "resultado" : "resultados"}
+              {todos.length} {todos.length === 1 ? "resultado" : "resultados"} · página{" "}
+              {paginaAtual} de {totalPaginas}
             </span>
           </div>
           {resultados.length === 0 ? (
@@ -57,6 +63,11 @@ export default async function Busca({
               ))}
             </div>
           )}
+          <Paginacao
+            paginaAtual={paginaAtual}
+            totalPaginas={totalPaginas}
+            hrefPagina={(n) => hrefCom("/busca", { termo, pagina: n })}
+          />
         </>
       )}
     </div>

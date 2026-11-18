@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 
 export default async function HabilidadePorCodigo({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params;
-  const habilidade = await apiGet<HabilidadeTermo>(`/habilidade/codigo/${encodeURIComponent(codigo)}`);
+  const encontradas = await apiGet<HabilidadeTermo[]>(`/habilidade/codigo/${encodeURIComponent(codigo)}`);
+  const habilidade = encontradas?.find((h) => h.codigo?.toUpperCase() === codigo.toUpperCase()) ?? encontradas?.[0];
   if (!habilidade) notFound();
 
   const niveis = (await apiGet<HabilidadeNiveis[]>(`/habilidade/${habilidade.habilidadeId}/niveis`)) ?? [];

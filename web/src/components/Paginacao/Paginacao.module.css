@@ -1,0 +1,76 @@
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--linha);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-2);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio-ctl);
+  padding: 7px 12px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+a.botao:hover { color: var(--rosa); border-color: var(--rosa-viva); }
+
+.desabilitado {
+  color: var(--texto-3);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.numeros {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+
+.numero {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: var(--raio-ctl);
+  font-family: var(--fonte-mono);
+  font-size: 0.7rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+a.numero:hover { color: var(--texto); background: var(--superficie); }
+
+.ativo {
+  color: var(--tinta);
+  background: var(--rosa);
+  font-weight: 500;
+}
+
+.reticencias {
+  color: var(--texto-3);
+  font-family: var(--fonte-mono);
+  font-size: 0.7rem;
+  padding: 0 2px;
+}
+
+@media (max-width: 560px) {
+  .paginacao { gap: 10px; }
+  .numero { min-width: 26px; height: 26px; }
+  .botao { padding: 6px 9px; }
+}

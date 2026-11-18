@@ -3,6 +3,8 @@ import { apiGet } from "@/lib/api";
 import type { GrupoOcupacao, Mercado, Ocupacao } from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import CardOcupacao from "@/components/CardOcupacao/CardOcupacao";
+import Paginacao from "@/components/Paginacao/Paginacao";
+import { fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -20,18 +22,26 @@ const DESTAQUE = [
 export default async function Ocupacoes({
   searchParams,
 }: {
-  searchParams: Promise<{ termo?: string }>;
+  searchParams: Promise<{ termo?: string; pagina?: string; pgrupos?: string }>;
 }) {
-  const { termo } = await searchParams;
+  const { termo, pagina, pgrupos } = await searchParams;
 
-  const resultados = termo
+  const todosResultados = termo
     ? ((await apiGet<Ocupacao[]>(`/ocupacao/termo/${encodeURIComponent(termo)}`)) ?? [])
     : null;
 
-  const grupos = resultados ? [] : ((await apiGet<GrupoOcupacao[]>("/grupoOcupacao")) ?? []);
-  const mercados = resultados
+  const grupos = todosResultados ? [] : ((await apiGet<GrupoOcupacao[]>("/grupoOcupacao")) ?? []);
+  const mercados = todosResultados
     ? []
     : await Promise.all(DESTAQUE.map((d) => apiGet<Mercado>(`/mercado/ocupacao/${d.ocupacaoId}`)));
+
+  const totalResultados = todosResultados?.length ?? 0;
+  const paginasResultados = totalDePaginas(totalResultados);
+  const paginaResultados = paginaValida(pagina, paginasResultados);
+  const resultados = todosResultados ? fatiar(todosResultados, paginaResultados) : null;
+
+  const paginasGrupos = totalDePaginas(grupos.length);
+  const paginaGrupos = paginaValida(pgrupos, paginasGrupos);
 
   return (
     <div className="container">
@@ -53,7 +63,9 @@ export default async function Ocupacoes({
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Resultados</h2>
             <span className={styles.secaoMeta}>
-              {resultados.length} {resultados.length === 1 ? "ocupação" : "ocupações"}
+              {totalResultados.toLocaleString("pt-BR")}{" "}
+              {totalResultados === 1 ? "ocupação" : "ocupações"} · página {paginaResultados} de{" "}
+              {paginasResultados}
             </span>
           </div>
           {resultados.length === 0 ? (
@@ -62,11 +74,18 @@ export default async function Ocupacoes({
               Tente outro termo ou navegue pelos grupos abaixo.
             </div>
           ) : (
-            <div className="grid-cards">
-              {resultados.slice(0, 30).map((o) => (
-                <CardOcupacao key={o.ocupacaoId} ocupacao={o} />
-              ))}
-            </div>
+            <>
+              <div className="grid-cards">
+                {resultados.map((o) => (
+                  <CardOcupacao key={o.ocupacaoId} ocupacao={o} />
+                ))}
+              </div>
+              <Paginacao
+                paginaAtual={paginaResultados}
+                totalPaginas={paginasResultados}
+                hrefPagina={(n) => hrefCom("/ocupacoes", { termo, pagina: n })}
+              />
+            </>
           )}
         </>
       )}
@@ -98,10 +117,12 @@ export default async function Ocupacoes({
 
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Grupos ocupacionais</h2>
-            <span className={styles.secaoMeta}>classificação ISCO · {grupos.length} grupos</span>
+            <span className={styles.secaoMeta}>
+              classificação ISCO · {grupos.length} grupos · página {paginaGrupos} de {paginasGrupos}
+            </span>
           </div>
           <div className={styles.grupos}>
-            {grupos.slice(0, 60).map((g) => (
+            {fatiar(grupos, paginaGrupos).map((g) => (
               <Link key={g.grupoId} href={`/ocupacoes/grupo/${g.grupoId}`} className={styles.grupo}>
                 <span className={styles.grupoCodigo}>{g.codigo}</span>
                 <span className={styles.grupoNome}>{g.nome}</span>
@@ -109,11 +130,11 @@ export default async function Ocupacoes({
               </Link>
             ))}
           </div>
-          {grupos.length > 60 && (
-            <p className={styles.maisGrupos}>
-              Mostrando 60 de {grupos.length} grupos — refine com a busca acima.
-            </p>
-          )}
+          <Paginacao
+            paginaAtual={paginaGrupos}
+            totalPaginas={paginasGrupos}
+            hrefPagina={(n) => hrefCom("/ocupacoes", { pgrupos: n })}
+          />
         </>
       )}
     </div>
