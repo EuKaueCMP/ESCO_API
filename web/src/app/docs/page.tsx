@@ -5,8 +5,8 @@ import styles from "./page.module.css";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Documentação da API" };
 
-const base = process.env.API_BASE_URL ?? "http://localhost:5116/escoapi/v1";
-const raiz = base.replace(/\/escoapi\/v1\/?$/, "");
+const base = process.env.API_BASE_URL ?? "http://localhost:5116/rbosfapi/v1";
+const raiz = base.replace(/\/rbosfapi\/v1\/?$/, "");
 const swagger = `${raiz}/swagger`;
 
 const GRUPOS: { titulo: string; rotas: { rota: string; desc: string }[] }[] = [

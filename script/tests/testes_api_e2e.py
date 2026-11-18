@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Testes E2E da ESCO_API contra uma carga completa dos scripts novos.
+Testes E2E da RBOSF_API contra uma carga completa dos scripts novos.
 
 O que o script faz, em ordem:
   1. Sobe um PostgreSQL efêmero em Docker (imagem configurável).
@@ -43,8 +43,8 @@ REPO = Path(__file__).resolve().parents[2]
 SQL_CREATE = REPO / "script/CREATE/esco_database_create.sql"
 SQL_REFACTOR = REPO / "script/CREATE/esco_database_refactor.sql"
 SQL_INSERT = REPO / "script/INSERTs/esco_db_refatorado.sql"
-API_PROJECT = REPO / "server/ESCO_API"
-BASE = "escoapi/v1"
+API_PROJECT = REPO / "server/RBOSF_API"
+BASE = "rbosfapi/v1"
 
 # Contagens esperadas em uma carga limpa (fonte: validação final do SQL)
 ESPERADO = {
@@ -119,7 +119,7 @@ def contagens(nome_container: str) -> dict:
     UNION ALL SELECT 'hierarquias_h', count(*) FROM esco_dataset.hierarquia_habilidade
     UNION ALL SELECT 'colecoes', count(*) FROM esco_dataset.colecao
     """
-    saida = psql(nome_container, sql, db="esco_db")
+    saida = psql(nome_container, sql, db="rbosf_db")
     return {k: int(v) for k, v in (linha.split("|") for linha in saida.splitlines())}
 
 
@@ -458,7 +458,7 @@ def imprimir_resultados(resultados, fases):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="E2E ESCO_API + carga SQL nova")
+    ap = argparse.ArgumentParser(description="E2E RBOSF_API + carga SQL nova")
     ap.add_argument("--imagem", default="postgres:latest")
     ap.add_argument("--pg-porta", type=int, default=None)
     ap.add_argument("--api-porta", type=int, default=None)
@@ -474,8 +474,8 @@ def main():
 
     pg_porta = args.pg_porta or porta_livre()
     api_porta = args.api_porta or porta_livre()
-    container = f"esco-api-tests-{os.getpid()}"
-    tmp = Path(tempfile.mkdtemp(prefix="esco_api_tests_"))
+    container = f"rbosf-api-tests-{os.getpid()}"
+    tmp = Path(tempfile.mkdtemp(prefix="rbosf_api_tests_"))
     api_proc = None
     fases = []
 
@@ -504,12 +504,12 @@ def main():
 
         log("Aplicando esco_database_refactor.sql")
         t = time.monotonic()
-        psql_arquivo(container, SQL_REFACTOR, "esco_db", tmp / "log_refactor.sql")
+        psql_arquivo(container, SQL_REFACTOR, "rbosf_db", tmp / "log_refactor.sql")
         fase("CREATE (tabelas de vínculo)", time.monotonic() - t)
 
         log("Aplicando esco_db_refatorado.sql (carga completa)...")
         t = time.monotonic()
-        psql_arquivo(container, SQL_INSERT, "esco_db", tmp / "log_insert.sql")
+        psql_arquivo(container, SQL_INSERT, "rbosf_db", tmp / "log_insert.sql")
         fase("INSERT (carga completa)", time.monotonic() - t)
 
         log("Validando contagens da carga")
@@ -523,7 +523,7 @@ def main():
         if not args.sem_idempotencia:
             log("Reexecutando carga para validar idempotência...")
             t = time.monotonic()
-            psql_arquivo(container, SQL_INSERT, "esco_db", tmp / "log_insert2.sql")
+            psql_arquivo(container, SQL_INSERT, "rbosf_db", tmp / "log_insert2.sql")
             fase("INSERT (idempotência)", time.monotonic() - t)
             cnt2 = contagens(container)
             if cnt2 != cnt:
@@ -544,7 +544,7 @@ def main():
         # 5. .env + start
         (publish_dir / ".env").write_text(
             f'DefaultConnection="Host=127.0.0.1;Port={pg_porta};'
-            f'Database=esco_db;Username=postgres;Password=postgres"\n')
+            f'Database=rbosf_db;Username=postgres;Password=postgres"\n')
         env = dict(os.environ)
         env["ASPNETCORE_ENVIRONMENT"] = "Development"
         env["ASPNETCORE_URLS"] = f"http://127.0.0.1:{api_porta}"
@@ -552,7 +552,7 @@ def main():
         log_api = open(tmp / "log_api.txt", "w")
         t = time.monotonic()
         api_proc = subprocess.Popen(
-            ["dotnet", "ESCO_API.dll"], cwd=publish_dir, env=env,
+            ["dotnet", "RBOSF_API.dll"], cwd=publish_dir, env=env,
             stdout=log_api, stderr=subprocess.STDOUT)
         http = HTTP(f"http://127.0.0.1:{api_porta}")
         deadline = time.monotonic() + 120

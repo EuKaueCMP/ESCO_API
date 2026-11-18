@@ -6,7 +6,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ caminho: string[] }> },
 ) {
-  const base = process.env.API_BASE_URL ?? "http://localhost:5116/escoapi/v1";
+  const base = process.env.API_BASE_URL ?? "http://localhost:5116/rbosfapi/v1";
   const { caminho } = await params;
   const alvo = `${base}/${caminho.map((parte) => encodeURIComponent(parte)).join("/")}${request.nextUrl.search}`;
 

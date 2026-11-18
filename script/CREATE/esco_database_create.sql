@@ -1,5 +1,5 @@
-CREATE DATABASE esco_db;
-\c esco_db
+CREATE DATABASE rbosf_db;
+\c rbosf_db
 CREATE SCHEMA IF NOT EXISTS esco_dataset;
 -- Faz com que o postgres procure e rode comandos dentro do schema definido
 SET search_path TO esco_dataset; 
