@@ -10,6 +10,8 @@ public partial class Habilidade
 
     public string Uri { get; set; } = null!;
 
+    public string? Codigo { get; set; }
+
     public string Nome { get; set; } = null!;
 
     public string Descricao { get; set; } = null!;
@@ -25,6 +27,8 @@ public partial class Habilidade
     public TipoConceitoEnum TipoConceito { get; set; }
     
     public ClassificacaoHabilidadeEnum? ClassificacaoHabilidade { get; set; }
+
+    public short? PesoRelevancia { get; set; }
 
     public string? NomesAlternativos { get; set; }
 

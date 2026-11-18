@@ -16,6 +16,8 @@ public partial class Ocupacao
 
     public StatusEnum StatusOcupacao {get; set;}
 
+    public short? PesoRelevancia { get; set; }
+
     public string? NomesAlternativos { get; set; }
 
     public int GrupoOcupacaoId { get; set; }

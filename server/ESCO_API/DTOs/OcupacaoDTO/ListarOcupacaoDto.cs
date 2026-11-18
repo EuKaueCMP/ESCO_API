@@ -12,6 +12,8 @@ public partial class ListarOcupacaoDto
 
     public StatusEnum StatusOcupacao {get; set;}
 
+    public short? PesoRelevancia { get; set; }
+
     public List<string>? NomesAlternativos { get; set; }
 
     public string NomeGrupoOcupacao { get; set; } = string.Empty!;

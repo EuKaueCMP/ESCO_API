@@ -14,8 +14,11 @@ public partial class EscoContext : DbContext
     public virtual DbSet<Colecao> Colecao { get; set; }
     public virtual DbSet<GrupoOcupacao> GrupoOcupacao { get; set; }
     public virtual DbSet<Habilidade> Habilidade { get; set; }
-    public virtual DbSet<Ocupacao> Ocupacao { get; set; }
+    public virtual DbSet<NivelHabilidade> NivelHabilidade { get; set; }
 
+    public virtual DbSet<NivelHabilidadeDescritor> NivelHabilidadeDescritor { get; set; }
+
+    public virtual DbSet<Ocupacao> Ocupacao { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -153,6 +156,10 @@ public partial class EscoContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("uri");
 
+            entity.Property(e => e.Codigo)
+                .HasMaxLength(8)
+                .HasColumnName("codigo");
+
             entity.Property(e => e.Nome)
                 .HasColumnName("nome");
 
@@ -188,6 +195,9 @@ public partial class EscoContext : DbContext
             entity.Property(e => e.ClassificacaoHabilidade)
                 .HasColumnName("classificacao_habilidade")
                 .HasColumnType("esco_dataset.classificacao_habilidade_enum");
+
+            entity.Property(e => e.PesoRelevancia)
+                .HasColumnName("peso_relevancia");
                 
             // Habilidade <-> Coleção
             entity.HasMany(e => e.Colecao)
@@ -248,6 +258,59 @@ public partial class EscoContext : DbContext
                     });
         });
 
+        // Nivel de responsabilidade SFIA (1-7)
+        modelBuilder.Entity<NivelHabilidade>(entity =>
+        {
+            entity.HasKey(e => e.Nivel)
+                .HasName("nivel_habilidade_pkey");
+
+            entity.ToTable("nivel_habilidade", "esco_dataset");
+
+            entity.Property(e => e.Nivel)
+                .HasColumnName("nivel");
+
+            entity.Property(e => e.Nome)
+                .HasColumnName("nome");
+
+            entity.Property(e => e.Descricao)
+                .HasColumnName("descricao");
+        });
+
+        // Descritor de nivel especifico por habilidade (faixa SFIA real da skill)
+        modelBuilder.Entity<NivelHabilidadeDescritor>(entity =>
+        {
+            entity.ToTable("nivel_habilidade_descritor", "esco_dataset");
+
+            entity.HasKey(e => new { e.HabilidadeId, e.Nivel })
+                .HasName("nivel_habilidade_descritor_pkey");
+
+            entity.Property(e => e.HabilidadeId)
+                .HasColumnName("habilidade_id");
+
+            entity.Property(e => e.Nivel)
+                .HasColumnName("nivel");
+
+            entity.Property(e => e.Descricao)
+                .HasColumnName("descricao");
+
+            entity.Property(e => e.DescricaoEn)
+                .HasColumnName("descricao_en");
+
+            entity.Property(e => e.Origem)
+                .HasColumnName("origem")
+                .HasDefaultValue("sintetizado");
+
+            entity.HasOne(e => e.NivelHabilidade)
+                .WithMany()
+                .HasForeignKey(e => e.Nivel)
+                .HasConstraintName("nivel_habilidade_descritor_nivel_fkey");
+
+            entity.HasOne(e => e.Habilidade)
+                .WithMany()
+                .HasForeignKey(e => e.HabilidadeId)
+                .HasConstraintName("nivel_habilidade_descritor_habilidade_id_fkey");
+        });
+
         // Ocupação
         modelBuilder.Entity<Ocupacao>(entity =>
         {
@@ -288,6 +351,9 @@ public partial class EscoContext : DbContext
                 .HasColumnName("status")
                 .HasColumnType("esco_dataset.status_enum");
 
+            entity.Property(e => e.PesoRelevancia)
+                .HasColumnName("peso_relevancia");
+
             entity.Property(e => e.Uri)
                 .HasMaxLength(100)
                 .HasColumnName("uri");
@@ -324,6 +390,13 @@ public partial class EscoContext : DbContext
 
                         join.IndexerProperty<int>("HabilidadeId")
                             .HasColumnName("habilidade_id");
+
+                        join.IndexerProperty<short?>("NivelHabilidade")
+                            .HasColumnName("nivel_habilidade");
+
+                        join.IndexerProperty<TipoRelacionamentoEnum>("TipoRelacionamento")
+                            .HasColumnName("tipo_relacionamento")
+                            .HasColumnType("esco_dataset.tipo_relacionamento_enum");
                     });
         });
 

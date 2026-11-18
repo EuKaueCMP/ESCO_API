@@ -36,13 +36,25 @@ namespace ESCO_API.Conversions
             {
                 HabilidadeId = habilidade.HabilidadeId,
                 Nome = habilidade.Nome,
+                Codigo = habilidade.Codigo,
                 Descricao = habilidade.Descricao,
                 ClassificacaoHabilidade = habilidade.ClassificacaoHabilidade,
                 NivelReutilizacao = habilidade.NivelReutilizacao,
                 NomesAlternativos = ConverterNomesAlternativos(habilidade.NomesAlternativos),
                 StatusHabilidade = habilidade.StatusHabilidade,
                 TipoConceito = habilidade.TipoConceito,
-                TipoHabilidade = habilidade.TipoHabilidade
+                TipoHabilidade = habilidade.TipoHabilidade,
+                PesoRelevancia = habilidade.PesoRelevancia
+            };
+        }
+
+        public static ListarNivelHabilidadeDto NivelHabilidadeToDto(NivelHabilidade nivel)
+        {
+            return new ListarNivelHabilidadeDto
+            {
+                Nivel = nivel.Nivel,
+                Nome = nivel.Nome,
+                Descricao = nivel.Descricao
             };
         }
 
@@ -56,7 +68,8 @@ namespace ESCO_API.Conversions
                 NomeGrupoOcupacao = ocupacao.GrupoOcupacao.Nome,
                 GrupoOcupacaoId = ocupacao.GrupoOcupacaoId,
                 NomesAlternativos = ConverterNomesAlternativos(ocupacao.NomesAlternativos),
-                StatusOcupacao = ocupacao.StatusOcupacao
+                StatusOcupacao = ocupacao.StatusOcupacao,
+                PesoRelevancia = ocupacao.PesoRelevancia
             };
         }
 

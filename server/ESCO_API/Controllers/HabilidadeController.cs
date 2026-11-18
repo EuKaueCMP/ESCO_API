@@ -74,5 +74,64 @@ namespace ESCO_API.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        /// <summary>Busca habilidades pelo código (padrão SFIA: 4 letras maiusculas, ex.: <c>PROG</c>).</summary>
+        /// <remarks>Retorna primeiro a habilidade cujo código é exatamente igual, depois habilidades
+        /// cujo código inicia com o termo informado e aquelas cuja busca textual corresponde.</remarks>
+        /// <param name="codigo">Código da habilidade (ex.: <c>PROG</c>, <c>SCTY</c>).</param>
+        /// <returns>Habilidades que correspondem ao código, ordenadas por correspondência exata.</returns>
+        /// <response code="200">Resultado da busca (pode ser vazio).</response>
+        /// <response code="404">Código inválido ou nenhuma habilidade encontrada.</response>
+        [HttpGet("codigo/{codigo}")]
+        [ProducesResponseType(typeof(List<ListarHabilidadeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorCodigo(string codigo)
+        {
+            try
+            {
+                return Ok(await _service.ListarPorCodigo(codigo));
+            }
+            catch (DomainException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>Lista os 7 níveis de habilidade (padrão SFIA), com nome e descrição em português.</summary>
+        /// <returns>Níveis de 1 a 7 (Seguir, Auxiliar, Aplicar, Capacitar, Assegurar, Iniciar, Definir estratégia).</returns>
+        /// <response code="200">Níveis retornados com sucesso.</response>
+        [HttpGet("niveis")]
+        [ProducesResponseType(typeof(List<ListarNivelHabilidadeDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<ListarNivelHabilidadeDto>>> ListarNiveis()
+        {
+            try
+            {
+                return Ok(await _service.ListarNiveis());
+            }
+            catch (DomainException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>Lista a faixa de níveis SFIA de uma habilidade, com o descritor oficial em português de cada nível.</summary>
+        /// <param name="habilidadeId">Id da habilidade.</param>
+        /// <returns>Níveis válidos da habilidade (ex.: PROG retorna níveis 2 a 6).</returns>
+        /// <response code="200">Faixa de níveis retornada com sucesso.</response>
+        /// <response code="404">Habilidade inexistente ou sem descritores publicados.</response>
+        [HttpGet("{habilidadeId:int}/niveis")]
+        [ProducesResponseType(typeof(List<ListarNiveisPorHabilidadeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<List<ListarNiveisPorHabilidadeDto>>> ListarNiveisPorHabilidadeId(int habilidadeId)
+        {
+            try
+            {
+                return Ok(await _service.ListarNiveisPorHabilidadeId(habilidadeId));
+            }
+            catch (DomainException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

@@ -12,7 +12,8 @@ namespace ESCO_API.Repositories
 
         public async Task<List<Habilidade>> Listar() 
             => await _ctx.Habilidade
-                .OrderBy(h => h.Nome)
+                .OrderByDescending(h => h.PesoRelevancia ?? 0)
+                .ThenBy(h => h.Nome)
                 .ToListAsync();
 
         public async Task<List<Habilidade>> ListarPorTermo(string termo)
@@ -24,10 +25,37 @@ namespace ESCO_API.Repositories
                 .OrderByDescending(h => h.SearchVector.Rank(
                     EF.Functions.PlainToTsQuery("portuguese", termo)))
                 .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Nome, termo))
+                .ThenByDescending(h => h.PesoRelevancia ?? 0)
                 .ToListAsync();
         }
 
         public async Task<Habilidade?> ObterPorId(int habilidadeId) 
             => await _ctx.Habilidade.FirstOrDefaultAsync(h => h.HabilidadeId == habilidadeId);
+
+        public async Task<List<Habilidade>> ListarPorCodigo(string codigo)
+        {
+            string termo = codigo.Trim().ToUpper();
+
+            return await _ctx.Habilidade
+                .Where(h => h.Codigo == termo ||
+                            h.Codigo!.StartsWith(termo) ||
+                            h.SearchVector.Matches(
+                                EF.Functions.PlainToTsQuery("portuguese", termo)))
+                .OrderBy(h => h.Codigo == termo ? 0 : 1)
+                .ThenBy(h => h.Nome)
+                .ToListAsync();
+        }
+
+        public async Task<List<NivelHabilidade>> ListarNiveis()
+            => await _ctx.NivelHabilidade
+                .OrderBy(n => n.Nivel)
+                .ToListAsync();
+
+        public async Task<List<NivelHabilidadeDescritor>> ListarNiveisPorHabilidadeId(int habilidadeId)
+            => await _ctx.NivelHabilidadeDescritor
+                .Include(d => d.NivelHabilidade)
+                .Where(d => d.HabilidadeId == habilidadeId)
+                .OrderBy(d => d.Nivel)
+                .ToListAsync();
     }
 }

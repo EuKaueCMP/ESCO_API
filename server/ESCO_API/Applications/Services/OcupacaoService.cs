@@ -49,17 +49,15 @@ namespace ESCO_API.Services
                 .Select(o => DomainToDto.OcupacaoToDto(o))
                 .ToList();
         }
-       public async Task<List<ListarHabilidadeDto>> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
+       public async Task<List<ListarHabilidadePorOcupacaoDto>> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
         {
             if(ocupacaoId <= 0)
                 throw new DomainException("Insira o id de uma ocupação.");
 
-            List<Habilidade> habilidades = await _repository.ListarHabilidadesPorOcupacaoId(ocupacaoId)
-                ?? throw new DomainException("Nenhuma habilidade encontrada.");
+            List<ListarHabilidadePorOcupacaoDto> habilidades = await _repository.ListarHabilidadesPorOcupacaoId(ocupacaoId)
+                ?? throw new DomainException("Nenhuma ocupação encontrada.");
 
-            return habilidades
-                .Select(h => DomainToDto.HabilidadeToDto(h))
-                .ToList();
+            return habilidades;
         }
 
         public async Task<ListarOcupacaoDto> ObterPorId(int ocupacaoId)

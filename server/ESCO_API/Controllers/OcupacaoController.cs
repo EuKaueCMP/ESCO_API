@@ -79,9 +79,9 @@ namespace ESCO_API.Controllers
         /// <response code="200">Habilidades da ocupação retornadas com sucesso.</response>
         /// <response code="404">Ocupação não encontrada.</response>
         [HttpGet("ocupacaoId/{ocupacaoId}/habilidades")]
-        [ProducesResponseType(typeof(List<ListarHabilidadeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ListarHabilidadePorOcupacaoDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorOcupacaoId(int ocupacaoId)
+        public async Task<ActionResult<List<ListarHabilidadePorOcupacaoDto>>> ListarPorOcupacaoId(int ocupacaoId)
         {
             try
             {

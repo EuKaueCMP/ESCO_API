@@ -8,6 +8,8 @@ public partial class ListarHabilidadeDto
 
     public string Nome { get; set; } = null!;
 
+    public string? Codigo { get; set; }
+
     public string Descricao { get; set; } = null!;
 
     public StatusEnum StatusHabilidade { get; set; }
@@ -19,6 +21,8 @@ public partial class ListarHabilidadeDto
     public TipoConceitoEnum TipoConceito { get; set; }
 
     public ClassificacaoHabilidadeEnum? ClassificacaoHabilidade { get; set; }
+
+    public short? PesoRelevancia { get; set; }
 
     public List<string>? NomesAlternativos { get; set; }
 
