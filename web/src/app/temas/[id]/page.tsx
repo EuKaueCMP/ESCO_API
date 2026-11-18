@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, ChevronRight, Users } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { SfiaView, SfiaViewDetalhe } from "@/lib/tipagem";
 import CardHabilidade from "@/components/CardHabilidade/CardHabilidade";
@@ -11,11 +10,9 @@ export const dynamic = "force-dynamic";
 export default async function Tema({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const viewId = Number(id);
+  if (!Number.isFinite(viewId)) notFound();
 
   const detalhe = await apiGet<SfiaViewDetalhe>(`/sfia/view/${viewId}`);
-  if (!detalhe || detalhe.habilidades.length === 0 && detalhe.view.profundidade > 1) {
-    // pagina sem habilidades diretas: ainda mostra sub-temas
-  }
   if (!detalhe) notFound();
 
   const views = (await apiGet<SfiaView[]>("/sfia/view")) ?? [];
@@ -34,10 +31,10 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
 
   return (
     <div className="container">
-      <nav className={styles.migalha}>
+      <nav className={styles.migalha} aria-label="Trilha de navegação">
         {migalha.map((m, i) => (
           <span key={i} className={styles.migalhaItem}>
-            {i > 0 && <ChevronRight size={13} className={styles.migalhaSeta} />}
+            {i > 0 && <span className={styles.separador}>/</span>}
             {m.id === null || m.id === viewId ? (
               <span className={i === migalha.length - 1 ? styles.migalhaAtual : styles.migalhaLink}>
                 {m.nome}
@@ -51,38 +48,45 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
         ))}
       </nav>
 
-      <h1 className="titulo-pagina">{view.nome}</h1>
-      <p className="subtitulo-pagina">
-        {detalhe.habilidades.length > 0
-          ? `${detalhe.habilidades.length} habilidades curadas neste tema`
-          : "Navegue pelos sub-temas abaixo"}
-      </p>
+      <div className={styles.cabeca}>
+        <span className="rotulo">
+          nível {String(view.profundidade).padStart(2, "0")} · {view.caminho}
+        </span>
+        <h1 className="titulo-pagina">{view.nome}</h1>
+        <p className="subtitulo-pagina">
+          {detalhe.habilidades.length > 0
+            ? `${detalhe.habilidades.length} habilidades curadas neste tema${filhos.length ? ` · ${filhos.length} sub-temas` : ""}.`
+            : "Este tema se abre em sub-temas — nenhuma habilidade listada diretamente."}
+        </p>
+      </div>
 
       {filhos.length > 0 && (
-        <>
-          <h2 className="titulo-secao">
-            <Users size={18} />
-            Sub-temas
-          </h2>
-          <div className="grid-cards">
-            {filhos.map((f) => (
-              <Link key={f.viewId} href={`/temas/${f.viewId}`} className="card">
-                <div className="card-titulo">{f.nome}</div>
-                <p className="card-sub">
-                  {(views.filter((v) => v.caminho.startsWith(f.caminho + "/")).length + 1)} páginas
-                </p>
+        <section>
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>Sub-temas</h2>
+            <span className={styles.secaoMeta}>{filhos.length} páginas</span>
+          </div>
+          <div className={styles.listaSubtemas}>
+            {filhos.map((f, i) => (
+              <Link key={f.viewId} href={`/temas/${f.viewId}`} className={styles.linhaSubtema}>
+                <span className={styles.numero}>{String(i + 1).padStart(2, "0")}</span>
+                <span className={styles.nomeSubtema}>{f.nome}</span>
+                <span className={styles.metaSubtema}>
+                  {views.filter((v) => v.caminho.startsWith(f.caminho + "/")).length + 1} pág.
+                </span>
+                <span className={styles.seta} aria-hidden="true">→</span>
               </Link>
             ))}
           </div>
-        </>
+        </section>
       )}
 
       {detalhe.habilidades.length > 0 && (
-        <>
-          <h2 className="titulo-secao">
-            <ArrowUpRight size={18} />
-            Habilidades
-          </h2>
+        <section>
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>Habilidades</h2>
+            <span className={styles.secaoMeta}>cada uma com descritores de nível</span>
+          </div>
           <div className="grid-cards">
             {detalhe.habilidades.map((h) => (
               <CardHabilidade
@@ -96,7 +100,7 @@ export default async function Tema({ params }: { params: Promise<{ id: string }>
               />
             ))}
           </div>
-        </>
+        </section>
       )}
     </div>
   );

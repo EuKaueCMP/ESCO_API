@@ -1,15 +1,1 @@
-.card {
-  display: flex;
-  flex-direction: column;
-}
-
-.topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.icone {
-  color: var(--rosa-forte);
-}
+.card { min-width: 0; }

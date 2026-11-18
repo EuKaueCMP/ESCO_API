@@ -1,122 +1,233 @@
 .hero {
-  padding: 64px 0 40px;
   display: grid;
-  gap: 16px;
-  justify-items: start;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 64px;
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--linha);
+  background:
+    radial-gradient(680px 260px at 22% 118%, rgba(233, 147, 181, 0.085), transparent 72%);
 }
 
-.sel {
-  margin-bottom: 2px;
+.heroTexto { display: grid; gap: 18px; justify-items: start; max-width: 760px; }
+
+.sobretitulo {
+  font-family: var(--fonte-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--texto-3);
 }
 
 .titulo {
-  font-size: clamp(1.9rem, 4.6vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.14;
-  max-width: 720px;
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 5.2vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  max-width: 21ch;
 }
 
-.titulo em {
-  font-style: normal;
-  color: var(--rosa-forte);
-}
+.titulo em { font-style: italic; color: var(--rosa); }
 
 .sub {
-  color: var(--texto-suave);
-  max-width: 620px;
-  margin-bottom: 10px;
+  color: var(--texto-2);
+  font-size: 0.97rem;
+  max-width: 56ch;
+  margin-bottom: 4px;
 }
 
-.hero :global(.busca-form) {
-  width: min(620px, 100%);
+.ficha {
+  align-self: end;
+  display: grid;
+  gap: 0;
+  padding-bottom: 4px;
 }
 
-.niveis {
+.ficha .rotulo { margin-bottom: 10px; }
+
+.fichaLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--linha-fraca);
+  font-size: 0.8rem;
+  color: var(--texto-2);
+}
+
+.fichaLinha strong {
+  font-family: var(--fonte-mono);
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.estatisticas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--linha);
+}
+
+.estatistica {
+  padding: 26px 24px 26px 0;
+  display: grid;
+  gap: 4px;
+}
+
+.estatistica + .estatistica {
+  border-left: 1px solid var(--linha-fraca);
+  padding-left: 24px;
+}
+
+.estatisticaNumero {
+  font-family: var(--fonte-serif);
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cabecalhoSecao {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  border-top: 1px solid var(--linha);
+  padding: 16px 0 4px;
+  margin-top: 68px;
+}
+
+.secaoNum {
+  font-family: var(--fonte-mono);
+  font-size: 0.68rem;
+  color: var(--rosa-viva);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.secaoTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.secaoMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+}
+
+.secaoLink {
+  margin-left: auto;
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+  transition: color 0.2s ease;
+}
+
+.secaoLink:hover { color: var(--rosa); }
+
+.escada {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 9px;
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 16px;
 }
 
-.nivelCard {
-  background: var(--superficie);
-  border: 1px solid var(--borda-suave);
-  border-radius: var(--raio);
-  padding: 15px 13px;
+.escadaCelula {
   display: grid;
-  gap: 3px;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  align-content: start;
+  gap: 8px;
+  padding: 18px 14px 22px 0;
+  border-left: 1px solid transparent;
+  transition: background 0.2s ease;
 }
 
-.nivelCard:hover {
-  border-color: var(--rosa-forte);
-  transform: translateY(-2px);
+.escadaCelula + .escadaCelula { border-left-color: var(--linha-fraca); padding-left: 14px; }
+
+.escadaCelula:hover { background: rgba(243, 188, 208, 0.025); }
+
+.escadaNumero {
+  font-family: var(--fonte-serif);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--rosa);
+  font-variant-numeric: tabular-nums;
 }
 
-.nivelNumero {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--rosa-forte);
+.escadaNome {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
-.nivelNome {
-  font-weight: 700;
-  font-size: 0.92rem;
+.escadaDesc {
+  color: var(--texto-3);
+  font-size: 0.73rem;
+  line-height: 1.45;
 }
 
-.nivelDesc {
-  color: var(--texto-suave);
-  font-size: 0.76rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.atalhos {
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 16px;
 }
 
-.acoes {
+.atalho {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 46px;
-}
-
-.acao {
-  background: var(--superficie);
-  border: 1px solid var(--borda-suave);
-  border-radius: var(--raio);
-  padding: 18px;
-  display: flex;
+  grid-template-columns: 220px 1fr auto;
+  grid-template-areas:
+    "rotulo nome seta"
+    "rotulo desc seta";
+  column-gap: 28px;
   align-items: center;
-  gap: 14px;
-  color: var(--texto-suave);
-  transition: border-color 0.15s ease;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease;
 }
 
-.acao:hover {
-  border-color: var(--rosa-forte);
+.atalho:hover { background: linear-gradient(90deg, rgba(243, 188, 208, 0.035), transparent 60%); }
+
+.atalho :global(.rotulo) { grid-area: rotulo; }
+
+.atalhoNome {
+  grid-area: nome;
+  font-family: var(--fonte-serif);
+  font-size: 1.6rem;
+  line-height: 1.15;
 }
 
-.acao strong {
-  display: block;
-  color: var(--texto);
-  font-size: 0.95rem;
+.atalhoDesc { grid-area: desc; color: var(--texto-3); font-size: 0.85rem; }
+
+.atalhoSeta {
+  grid-area: seta;
+  font-family: var(--fonte-mono);
+  color: var(--texto-3);
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.acao span {
-  font-size: 0.8rem;
+.atalho:hover .atalhoSeta { transform: translateX(5px); color: var(--rosa-viva); }
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 52px; }
+  .ficha { display: none; }
+  .estatisticas { grid-template-columns: repeat(2, 1fr); }
+  .estatistica:nth-child(3) { border-left: none; padding-left: 0; }
+  .estatistica:nth-child(n + 3) { border-top: 1px solid var(--linha-fraca); }
+  .escada { grid-template-columns: repeat(4, 1fr); }
+  .escadaCelula:nth-child(5) { border-left-color: transparent; padding-left: 0; }
+  .secaoMeta { display: none; }
 }
 
-.acao svg:last-child {
-  margin-left: auto;
-  color: var(--rosa-forte);
-}
-
-@media (max-width: 860px) {
-  .niveis {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .acoes {
-    grid-template-columns: 1fr;
+@media (max-width: 620px) {
+  .escada { grid-template-columns: repeat(2, 1fr); }
+  .escadaCelula { border-left-color: transparent !important; padding-left: 0 !important; }
+  .atalho {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "rotulo seta" "nome seta" "desc seta";
   }
 }

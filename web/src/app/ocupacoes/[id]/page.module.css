@@ -1,119 +1,170 @@
-.chipGrupo {
-  margin-bottom: 18px;
+.cabeca { padding-top: 40px; }
+
+.metaTopo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
 }
 
-.mercadoResumo {
+.voltar { color: var(--texto-3); text-transform: uppercase; transition: color 0.2s ease; }
+.voltar:hover { color: var(--rosa); }
+.separador { color: var(--linha); }
+.grupoLink { color: var(--verde); transition: color 0.2s ease; }
+.grupoLink:hover { color: var(--texto); }
+
+.resumo { color: var(--texto-2); max-width: 68ch; margin-bottom: 40px; }
+
+.painel {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--linha);
+  border-bottom: 1px solid var(--linha-fraca);
 }
 
-.resumoCard {
-  background: var(--superficie);
-  border: 1px solid var(--borda-suave);
-  border-radius: var(--raio);
-  padding: 16px 18px;
-}
+.painelCelula { padding: 22px 22px 22px 0; display: grid; gap: 6px; }
+.painelCelula + .painelCelula { border-left: 1px solid var(--linha-fraca); padding-left: 22px; }
 
-.resumoCard strong {
-  display: block;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--rosa-forte);
-}
-
-.resumoCard span {
-  color: var(--texto-suave);
-  font-size: 0.78rem;
+.painelNumero {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .fonte {
-  margin-top: 12px;
-  color: var(--texto-fraco);
-  font-size: 0.74rem;
+  margin-top: 10px;
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--texto-3);
 }
 
-.topSkills {
-  display: grid;
-  gap: 8px;
-}
-
-.topSkill {
+.cabecalhoSecao {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--fundo-2);
-  border-radius: var(--raio-m);
-  padding: 9px 14px;
-  font-size: 0.9rem;
-  transition: background 0.15s ease;
+  align-items: baseline;
+  gap: 14px;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+  margin-top: 56px;
 }
 
-.topSkill:hover {
-  background: var(--superficie-2);
+.secaoTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
 }
 
-.topSkillNome {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.secaoMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+  margin-left: auto;
 }
 
-.topSkillPct {
-  color: var(--verde);
-  font-weight: 700;
-  font-size: 0.82rem;
-  margin-left: 12px;
-}
+.corpoBloco { padding: 22px 0 6px; }
 
-.secaoSub {
-  color: var(--texto-suave);
-  font-size: 0.88rem;
-  max-width: 640px;
-  margin: -8px 0 18px;
-}
+.skillsMercado { display: grid; gap: 2px; max-width: 720px; }
 
-.subLista {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--texto-suave);
-  font-size: 0.85rem;
-  margin: 18px 0 10px;
-}
-
-.listaSkills {
+.skillMercado {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--linha-fraca);
 }
+
+.skillMercado:hover .skillNome { color: var(--rosa); }
+
+.skillNome { font-size: 0.88rem; transition: color 0.2s ease; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.skillTrilha { height: 3px; background: var(--linha-fraca); }
+.skillTrilha span { display: block; height: 100%; background: var(--verde-vivo); }
+
+.skillPct {
+  font-family: var(--fonte-mono);
+  font-size: 0.68rem;
+  color: var(--texto-2);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.nota { color: var(--texto-3); font-size: 0.86rem; margin-top: 8px; max-width: 62ch; }
+
+.trilha { border-top: 1px solid var(--linha-fraca); margin-top: 18px; }
+
+.trilhaLinha {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: baseline;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.trilhaLinha:hover {
+  background: linear-gradient(90deg, rgba(243, 188, 208, 0.03), transparent 55%);
+  padding-left: 6px;
+}
+
+.numero {
+  font-family: var(--fonte-mono);
+  font-size: 0.66rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.trilhaNome { font-family: var(--fonte-serif); font-size: 1.18rem; line-height: 1.25; }
+
+.trilhaMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.62rem;
+  color: var(--texto-3);
+  letter-spacing: 0.04em;
+}
+
+.trilhaGap { font-size: 0.78rem; color: var(--verde); }
+
+.skills { border-top: 1px solid var(--linha-fraca); margin-top: 16px; }
 
 .skill {
-  background: var(--superficie);
-  border: 1px solid var(--borda-suave);
-  border-radius: var(--raio-m);
-  padding: 12px 16px;
-  transition: border-color 0.15s ease;
+  display: block;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease;
 }
 
-.skill:hover {
-  border-color: var(--rosa-forte);
+.skill:hover { background: rgba(243, 188, 208, 0.025); }
+
+.skillTopo { display: flex; align-items: center; gap: 12px; }
+.skillNome { font-weight: 500; font-size: 0.93rem; }
+.skillTopo :global(.codigo-sfia) { flex-shrink: 0; }
+.skillTopo > :global(.faixa) { margin-left: auto; }
+
+.skillJust { margin-top: 5px; color: var(--texto-3); font-size: 0.81rem; max-width: 76ch; }
+
+.complementares { margin-top: 26px; }
+.complementares summary span:last-child { color: var(--texto-2); font-size: 0.85rem; }
+
+@media (max-width: 860px) {
+  .painel { grid-template-columns: repeat(2, 1fr); }
+  .painelCelula:nth-child(3) { border-left: none; padding-left: 0; }
+  .painelCelula:nth-child(n + 3) { border-top: 1px solid var(--linha-fraca); }
+  .trilhaLinha { grid-template-columns: 30px minmax(0, 1fr) auto; }
+  .trilhaGap { grid-column: 2 / -1; }
+  .secaoMeta { display: none; }
 }
 
-.skillTopo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.skillNome {
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-
-.skillJust {
-  margin-top: 6px;
-  color: var(--texto-suave);
-  font-size: 0.8rem;
+@media (max-width: 560px) {
+  .skillMercado { grid-template-columns: minmax(0, 1fr) 46px; }
+  .skillTrilha { display: none; }
 }

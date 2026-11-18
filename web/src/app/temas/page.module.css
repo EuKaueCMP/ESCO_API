@@ -1,7 +1,55 @@
-.card-sub b {
-  color: var(--rosa);
+.cabeca { padding-top: 46px; }
+.cabeca :global(.rotulo) { display: block; margin-bottom: 14px; }
+
+.indice {
+  border-top: 1px solid var(--linha);
 }
 
-.card {
-  position: relative;
+.linha {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 160px 24px;
+  align-items: baseline;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.linha:hover {
+  background: linear-gradient(90deg, rgba(243, 188, 208, 0.03), transparent 55%);
+  padding-left: 8px;
+}
+
+.numero {
+  font-family: var(--fonte-mono);
+  font-size: 0.68rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.nome {
+  font-family: var(--fonte-serif);
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+  line-height: 1.25;
+}
+
+.meta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  text-align: right;
+}
+
+.seta {
+  font-family: var(--fonte-mono);
+  color: var(--texto-3);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.linha:hover .seta { color: var(--rosa-viva); transform: translateX(4px); }
+
+@media (max-width: 640px) {
+  .linha { grid-template-columns: 34px minmax(0, 1fr) 20px; }
+  .meta { display: none; }
 }

@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
 import styles from "./SearchBar.module.css";
 
 export default function SearchBar({
-  placeholder = "Busque habilidades ou ocupações (tolerante a erros de digitação)",
+  placeholder = "Ex.: kubernet, analista de dados, phyton…",
   destino = "/busca",
 }: {
   placeholder?: string;
@@ -23,7 +22,8 @@ export default function SearchBar({
   }
 
   return (
-    <form className={styles.form} onSubmit={enviar} role="search">
+    <form className={`busca-form ${styles.form}`} onSubmit={enviar} role="search">
+      <span className={styles.chevron} aria-hidden="true">›</span>
       <input
         className="busca-input"
         type="search"
@@ -33,8 +33,7 @@ export default function SearchBar({
         aria-label="Buscar"
       />
       <button className="busca-btn" type="submit">
-        <Search size={16} strokeWidth={2.4} />
-        Buscar
+        buscar
       </button>
     </form>
   );

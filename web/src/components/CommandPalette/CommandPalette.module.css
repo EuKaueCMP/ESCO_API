@@ -1,0 +1,110 @@
+.veu {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(10, 8, 10, 0.62);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  padding-top: min(18vh, 160px);
+  animation: surgir 0.18s ease both;
+}
+
+.painel {
+  width: min(560px, 92vw);
+  height: fit-content;
+  background: var(--tinta-2);
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: subir 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 20px;
+  border-bottom: 1px solid var(--linha);
+}
+
+.prompt {
+  font-family: var(--fonte-mono);
+  color: var(--rosa-viva);
+  font-size: 1.05rem;
+}
+
+.campo input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 17px 0;
+  font-size: 1rem;
+  color: var(--texto);
+}
+
+.campo input::placeholder { color: var(--texto-3); }
+
+.lista { padding: 8px; }
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: var(--raio-ctl);
+  transition: background 0.15s ease;
+}
+
+.item:hover { background: var(--superficie); }
+
+.itemRotulo {
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+  width: 74px;
+  flex-shrink: 0;
+}
+
+.itemNome {
+  font-family: var(--fonte-serif);
+  font-size: 1.08rem;
+  color: var(--texto);
+}
+
+.itemSeta {
+  margin-left: auto;
+  font-family: var(--fonte-mono);
+  color: var(--texto-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.item:hover .itemSeta { opacity: 1; transform: none; color: var(--rosa-viva); }
+
+.rodape {
+  display: flex;
+  gap: 20px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--linha-fraca);
+  font-family: var(--fonte-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--texto-3);
+}
+
+.rodape kbd {
+  font-family: inherit;
+  border: 1px solid var(--linha);
+  border-radius: 3px;
+  padding: 0 5px;
+  color: var(--texto-2);
+}
+
+@keyframes surgir { from { opacity: 0; } }
+@keyframes subir { from { opacity: 0; transform: translateY(10px) scale(0.99); } }

@@ -1,4 +1,3 @@
-import { GraduationCap, Layers, Ruler } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { Nivel, SfiaAtributo, SfiaAtributoNivel } from "@/lib/tipagem";
 import styles from "./page.module.css";
@@ -21,46 +20,48 @@ export default async function Niveis() {
 
   return (
     <div className="container">
-      <h1 className="titulo-pagina" style={{ paddingTop: 30 }}>Níveis de responsabilidade</h1>
-      <p className="subtitulo-pagina">
-        A escala 1–7 que organiza todas as habilidades do framework — e os 16 atributos que explicam
-        o que muda de um nível para outro.
-      </p>
+      <div className={styles.cabeca}>
+        <span className="rotulo">a régua · 7 níveis · 16 atributos</span>
+        <h1 className="titulo-pagina">Níveis de responsabilidade</h1>
+        <p className="subtitulo-pagina">
+          A escala que organiza todas as habilidades — do trabalho sob supervisão à definição de
+          estratégia. Cada nível se descreve por 16 atributos, de autonomia a influência.
+        </p>
+      </div>
 
-      <h2 className="titulo-secao">
-        <Layers size={18} />
-        A escala
-      </h2>
+      <div className={styles.cabecalhoSecao}>
+        <h2 className={styles.secaoTitulo}>A escala</h2>
+        <span className={styles.secaoMeta}>1 executor · 7 estrategista</span>
+      </div>
       <div className={styles.escala}>
         {(niveis ?? []).map((n) => (
-          <div key={n.nivel} className="bloco">
-            <div className={styles.cabecalhoNivel}>
-              <span className={styles.numeroNivel}>{n.nivel}</span>
-              <div className={styles.nomeNivel}>{n.nome}</div>
+          <article key={n.nivel} className={styles.nivel}>
+            <span className={styles.nivelNumero}>{n.nivel}</span>
+            <div className={styles.nivelCorpo}>
+              <h3 className={styles.nivelNome}>{n.nome}</h3>
+              <p className={styles.nivelDesc}>{n.descricao}</p>
             </div>
-            <p className={styles.descNivel}>{n.descricao}</p>
-          </div>
+          </article>
         ))}
       </div>
 
-      <h2 className="titulo-secao">
-        <Ruler size={18} />
-        Os 16 atributos que definem os níveis
-      </h2>
+      <div className={styles.cabecalhoSecao}>
+        <h2 className={styles.secaoTitulo}>Os 16 atributos</h2>
+        <span className={styles.secaoMeta}>abertos por nível</span>
+      </div>
       <div className={styles.atributos}>
         {detalhes.map(({ atributo, niveis: ns }) => (
           <details key={atributo.slug} className="acordeao">
             <summary>
               {atributo.codigo && <span className="codigo-sfia">{atributo.codigo}</span>}
-              {atributo.nome}
-              <GraduationCap size={15} className={styles.setaIcone} />
+              <span className={styles.atributoNome}>{atributo.nome}</span>
             </summary>
             <div className="acordeao-corpo">
               {ns.map((n) => (
                 <div key={n.nivel} className={styles.atributoNivel}>
                   <span className={styles.atributoNumero}>{n.nivel}</span>
                   <div>
-                    <span className={styles.atributoNome}>{n.nomeNivel}</span>
+                    <span className={styles.atributoNivelNome}>{n.nomeNivel}</span>
                     <p className={styles.atributoDesc}>{n.descricao}</p>
                   </div>
                 </div>

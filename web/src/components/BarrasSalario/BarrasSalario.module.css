@@ -1,71 +1,81 @@
-.grade {
-  display: grid;
-  gap: 20px;
-}
+.grade { display: grid; gap: 4px; }
 
 .linha {
   display: grid;
-  gap: 6px;
-}
-
-.cabecalho {
-  display: flex;
+  grid-template-columns: 170px minmax(0, 1fr) 200px;
+  grid-template-areas:
+    "rotulo barra valores"
+    "rotulo barra amostra";
   align-items: center;
-  justify-content: space-between;
-  font-size: 0.88rem;
-  font-weight: 600;
+  column-gap: 22px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--linha-fraca);
 }
 
-.nome {
-  color: var(--texto);
+.rotulo { grid-area: rotulo; display: flex; align-items: baseline; gap: 10px; }
+
+.nivel {
+  font-family: var(--fonte-mono);
+  font-size: 0.7rem;
+  color: var(--rosa);
+  font-variant-numeric: tabular-nums;
 }
+
+.nome { font-size: 0.83rem; color: var(--texto-2); line-height: 1.3; }
 
 .barra {
+  grid-area: barra;
   position: relative;
-  height: 14px;
-  border-radius: 7px;
-  background: var(--cinza-fundo);
+  height: 18px;
+  background: var(--linha-fraca);
   overflow: hidden;
 }
 
-.barra span {
-  position: absolute;
-  inset: 0 auto 0 0;
-}
+.barra span { position: absolute; inset: 0 auto 0 0; }
 
-.p25 {
-  background: rgba(147, 209, 171, 0.25);
-  border-radius: 7px 0 0 7px;
-}
+.faixa { background: rgba(165, 217, 188, 0.16); }
 
-.p50 {
-  background: rgba(147, 209, 171, 0.45);
-  border-radius: 7px 0 0 7px;
-}
+.aterro { background: rgba(165, 217, 188, 0.34); }
 
-.p75 {
-  background: rgba(147, 209, 171, 0.6);
-  border-radius: 7px 0 0 7px;
-}
-
-.p90 {
-  background: rgba(147, 209, 171, 0.3);
-  border-radius: 7px;
+.mediana {
+  width: 1px;
+  background: var(--rosa);
+  z-index: 1;
 }
 
 .valores {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--texto-suave);
+  grid-area: valores;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
-.mediana {
-  color: var(--verde);
-  font-weight: 700;
-}
+.p50 { color: var(--verde); }
 
 .amostra {
-  font-size: 0.72rem;
-  color: var(--texto-fraco);
+  grid-area: amostra;
+  font-family: var(--fonte-mono);
+  font-size: 0.58rem;
+  color: var(--texto-3);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 760px) {
+  .linha {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "rotulo"
+      "barra"
+      "valores"
+      "amostra";
+    row-gap: 6px;
+  }
+  .valores, .amostra { text-align: left; }
+  .valores { max-width: 280px; }
 }

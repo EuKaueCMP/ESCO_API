@@ -1,15 +1,13 @@
-.form {
-  display: flex;
-  gap: 10px;
+.chevron {
+  font-family: var(--fonte-mono);
+  color: var(--rosa-viva);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
-@media (max-width: 560px) {
-  .form {
-    flex-direction: column;
-  }
+.form { max-width: 640px; }
 
-  .busca-btn {
-    justify-content: center;
-    padding: 12px 20px;
-  }
+@media (max-width: 560px) {
+  .form { gap: 10px; }
+  .form :global(.busca-btn) { padding: 8px 12px; }
 }

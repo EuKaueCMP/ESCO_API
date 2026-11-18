@@ -1,9 +1,82 @@
-.populares {
+.cabeca { padding-top: 46px; }
+.cabeca :global(.rotulo) { display: block; margin-bottom: 14px; }
+
+.cabecalhoSecao {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+  margin-top: 56px;
 }
 
-.populares .card {
-  min-width: 180px;
+.secaoTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.secaoMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+  margin-left: auto;
+}
+
+.temas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 44px;
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 14px;
+}
+
+.tema, .popular {
+  display: grid;
+  align-items: baseline;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.tema {
+  grid-template-columns: 34px minmax(0, 1fr) 20px;
+  gap: 12px;
+  padding: 13px 0;
+}
+
+.popular {
+  grid-template-columns: auto minmax(0, 1fr) 20px;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+.tema:hover, .popular:hover {
+  background: linear-gradient(90deg, rgba(243, 188, 208, 0.03), transparent 55%);
+  padding-left: 6px;
+}
+
+.numero {
+  font-family: var(--fonte-mono);
+  font-size: 0.66rem;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.temaNome { font-family: var(--fonte-serif); font-size: 1.15rem; line-height: 1.25; }
+.popularNome { font-size: 0.9rem; color: var(--texto-2); }
+
+.seta {
+  font-family: var(--fonte-mono);
+  color: var(--texto-3);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.tema:hover .seta, .popular:hover .seta { color: var(--rosa-viva); transform: translateX(4px); }
+
+.populares { border-top: 1px solid var(--linha-fraca); margin-top: 14px; }
+
+@media (max-width: 700px) {
+  .temas { grid-template-columns: 1fr; }
 }

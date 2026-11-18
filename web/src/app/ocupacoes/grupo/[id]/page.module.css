@@ -1,0 +1,15 @@
+.cabeca { padding-top: 40px; }
+
+.metaTopo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+}
+
+.voltar { color: var(--texto-3); text-transform: uppercase; transition: color 0.2s ease; }
+.voltar:hover { color: var(--rosa); }
+.separador { color: var(--linha); }

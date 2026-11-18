@@ -1,40 +1,63 @@
-.lista {
-  display: grid;
-  gap: 8px;
+.cabeca { padding-top: 46px; }
+.cabeca :global(.rotulo) { display: block; margin-bottom: 14px; }
+
+.cabecalhoSecao {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+  margin-top: 56px;
 }
+
+.secaoTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.secaoMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+  margin-left: auto;
+}
+
+.lista { border-top: 1px solid var(--linha-fraca); margin-top: 14px; }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 16px;
+  padding: 14px 28px 14px 0 !important;
 }
 
-.iconeHab {
-  color: var(--rosa-forte);
-}
-
-.iconeOcup {
-  color: var(--verde-forte);
+.tipo {
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+  width: 56px;
+  flex-shrink: 0;
 }
 
 .nome {
-  font-weight: 600;
-  font-size: 0.93rem;
+  font-family: var(--fonte-serif);
+  font-size: 1.15rem;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.tipo {
-  flex-shrink: 0;
-}
-
 .score {
-  color: var(--texto-fraco);
-  font-size: 0.78rem;
-  font-weight: 600;
-  width: 38px;
+  font-family: var(--fonte-mono);
+  font-size: 0.66rem;
+  color: var(--texto-3);
+  width: 42px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }

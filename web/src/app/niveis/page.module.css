@@ -1,86 +1,86 @@
-.escala {
-  display: grid;
-  gap: 10px;
-}
+.cabeca { padding-top: 46px; }
+.cabeca :global(.rotulo) { display: block; margin-bottom: 14px; }
 
-.cabecalhoNivel {
+.cabecalhoSecao {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 14px;
-  margin-bottom: 10px;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+  margin-top: 56px;
 }
 
-.numeroNivel {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  background: var(--rosa-fundo);
-  color: var(--rosa);
-  font-weight: 800;
-  font-size: 1.15rem;
+.secaoTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.secaoMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+  margin-left: auto;
+}
+
+.escala { border-top: 1px solid var(--linha-fraca); margin-top: 14px; }
+
+.nivel {
   display: grid;
-  place-items: center;
-  flex-shrink: 0;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 28px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  align-items: start;
 }
 
-.nomeNivel {
-  font-weight: 700;
+.nivelNumero {
+  font-family: var(--fonte-serif);
+  font-size: clamp(2.2rem, 3.6vw, 2.9rem);
+  line-height: 0.9;
+  color: var(--rosa);
+  font-variant-numeric: tabular-nums;
 }
 
-.descNivel {
-  color: var(--texto-suave);
-  font-size: 0.92rem;
-  max-width: 820px;
-}
+.nivelNome { font-size: 1rem; font-weight: 500; margin-bottom: 5px; }
+
+.nivelDesc { color: var(--texto-2); font-size: 0.9rem; max-width: 78ch; }
 
 .atributos {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  column-gap: 48px;
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 14px;
 }
 
-.setaIcone {
-  margin-left: auto;
-  color: var(--texto-fraco);
-}
+.atributoNome { font-family: var(--fonte-serif); font-size: 1.12rem; font-weight: 400; }
 
 .atributoNivel {
-  display: flex;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
   gap: 12px;
   padding: 9px 0;
-  border-top: 1px solid var(--borda-suave);
+  border-top: 1px solid var(--linha-fraca);
 }
 
-.atributoNivel:first-child {
-  border-top: none;
-}
+.atributoNivel:first-child { border-top: none; }
 
 .atributoNumero {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: var(--cinza-fundo);
-  color: var(--texto-suave);
-  font-weight: 700;
-  font-size: 0.82rem;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
+  font-family: var(--fonte-serif);
+  font-size: 1.15rem;
+  line-height: 1.1;
+  color: var(--rosa);
+  font-variant-numeric: tabular-nums;
 }
 
-.atributoNome {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--verde);
-}
+.atributoNivelNome { font-size: 0.8rem; font-weight: 500; color: var(--verde); }
 
-.atributoDesc {
-  color: var(--texto-suave);
-  font-size: 0.82rem;
-}
+.atributoDesc { color: var(--texto-3); font-size: 0.8rem; }
 
 @media (max-width: 760px) {
-  .atributos {
-    grid-template-columns: 1fr;
-  }
+  .atributos { grid-template-columns: 1fr; }
+  .secaoMeta { display: none; }
 }

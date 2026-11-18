@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Compass } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { SfiaView } from "@/lib/tipagem";
 import styles from "./page.module.css";
@@ -13,22 +12,26 @@ export default async function Temas() {
 
   return (
     <div className="container">
-      <h1 className="titulo-pagina">Temas &amp; domínios</h1>
-      <p className="subtitulo-pagina">
-        A curadoria de habilidades em {raizes.length} domínios — de IA e cibersegurança a tecnologia
-        sustentável. Abra um tema e desça pelos sub-temas até as habilidades.
-      </p>
-      <div className="grid-cards">
-        {raizes.map((raiz) => {
-          const filhos = views.filter((v) => v.slugPai === raiz.caminho);
+      <div className={styles.cabeca}>
+        <span className="rotulo">índice · nível 01</span>
+        <h1 className="titulo-pagina">Temas &amp; domínios</h1>
+        <p className="subtitulo-pagina">
+          A curadoria começa em {raizes.length} domínios — de IA e cibersegurança a tecnologia
+          sustentável. Cada tema abre em sub-temas e termina nas habilidades, uma a uma.
+        </p>
+      </div>
+
+      <div className={styles.indice}>
+        {raizes.map((raiz, i) => {
+          const descendentes = views.filter((v) => v.caminho.startsWith(raiz.caminho + "/"));
           return (
-            <Link key={raiz.viewId} href={`/temas/${raiz.viewId}`} className={`card ${styles.card}`}>
-              <div className="card-titulo">{raiz.nome}</div>
-              <p className="card-sub">
-                {filhos.length > 0
-                  ? `${filhos.length} sub-temas · ${(views.filter((v) => v.caminho.startsWith(raiz.caminho + "/")).length + 1)} páginas`
-                  : "Tema raiz"}
-              </p>
+            <Link key={raiz.viewId} href={`/temas/${raiz.viewId}`} className={styles.linha}>
+              <span className={styles.numero}>{String(i + 1).padStart(2, "0")}</span>
+              <span className={styles.nome}>{raiz.nome}</span>
+              <span className={styles.meta}>
+                {descendentes.length} {descendentes.length === 1 ? "página filha" : "páginas filhas"}
+              </span>
+              <span className={styles.seta} aria-hidden="true">→</span>
             </Link>
           );
         })}

@@ -1,31 +1,52 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Instrument_Serif } from "next/font/google";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import CommandPalette from "@/components/CommandPalette/CommandPalette";
 import "./globals.css";
 
-const montserrat = Montserrat({
+const sans = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext"],
-  variable: "--fonte-montserrat",
+  weight: ["400", "500", "600"],
+  variable: "--fonte-sans",
+  display: "swap",
+});
+
+const mono = IBM_Plex_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  variable: "--fonte-mono",
+  display: "swap",
+});
+
+const serif = Instrument_Serif({
+  subsets: ["latin", "latin-ext"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--fonte-serif",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "ESCO·SFIA — habilidades, ocupações e mercado real",
-    template: "%s · ESCO·SFIA",
+    default: "RBOSF — o índice de habilidades, níveis e ocupações",
+    template: "%s · RBOSF",
   },
   description:
-    "Framework integrado de habilidades e ocupações: SFIA 9 + ESCO com dado real de mercado, trilhas de carreira e busca inteligente.",
+    "RBOSF — Relation Between Occupations and Skills Framework. SFIA 9 e ESCO integrados: 16 mil habilidades, 3 mil ocupações, descritores por nível, rubrica de avaliação, salários reais e trilhas de progressão.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={montserrat.variable}>
+    <html
+      lang="pt-BR"
+      className={`${sans.variable} ${mono.variable} ${serif.variable}`}
+    >
       <body>
         <Header />
         <main>{children}</main>
         <Footer />
+        <CommandPalette />
       </body>
     </html>
   );

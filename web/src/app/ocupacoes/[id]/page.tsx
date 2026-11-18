@@ -1,18 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  Briefcase, ClipboardList, GraduationCap, Map, Coins, Users, TrendingUp,
-} from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { GrupoOcupacao, Mercado, OcupacaoHabilidades, Ocupacao, Trilha } from "@/lib/tipagem";
 import BarrasSalario from "@/components/BarrasSalario/BarrasSalario";
 import BadgeNivel from "@/components/BadgeNivel/BadgeNivel";
-import CardOcupacao from "@/components/CardOcupacao/CardOcupacao";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function Ocupacao({ params }: { params: Promise<{ id: string }> }) {
+const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+
+export default async function OcupacaoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const ocupacaoId = Number(id);
   if (!Number.isFinite(ocupacaoId)) notFound();
@@ -31,132 +29,140 @@ export default async function Ocupacao({ params }: { params: Promise<{ id: strin
   const complementares = (vinculos ?? []).filter(
     (v) => v.tipoRelacionamento !== "essencial" && v.pesoRelevancia !== null && v.pesoRelevancia > 2,
   );
-  const grupo = (grupos ?? []).find((g) => g.grupoId === (ocupacao as any).grupoId);
-  const topSkills = (mercado?.habilidades ?? []).slice(0, 8);
+  const grupo = (grupos ?? []).find((g) => g.grupoId === (ocupacao as { grupoId?: number }).grupoId);
+  const topSkills = (mercado?.habilidades ?? []).slice(0, 10);
+  const inicial = mercado?.salarios?.[0];
 
   return (
     <div className="container">
-      <h1 className="titulo-pagina" style={{ paddingTop: 30 }}>{ocupacao.titulo}</h1>
-      {grupo && (
-        <span className={`chip chip-verde ${styles.chipGrupo}`}>
-          <Briefcase size={12} /> {grupo.nome}
-        </span>
-      )}
-      <p className="subtitulo-pagina">{ocupacao.descricao}</p>
+      <div className={styles.cabeca}>
+        <div className={styles.metaTopo}>
+          <Link href="/ocupacoes" className={styles.voltar}>← ocupações</Link>
+          {grupo && (
+            <>
+              <span className={styles.separador}>/</span>
+              <Link href={`/ocupacoes/grupo/${grupo.grupoId}`} className={styles.grupoLink}>
+                {grupo.codigo} · {grupo.nome}
+              </Link>
+            </>
+          )}
+        </div>
+        <h1 className="titulo-pagina">{ocupacao.titulo}</h1>
+        {ocupacao.descricao && <p className={styles.resumo}>{ocupacao.descricao}</p>}
+      </div>
 
       {mercado && (
-        <section>
-          <h2 className="titulo-secao">
-            <TrendingUp size={18} />
-            Mercado real
-          </h2>
-          <div className={styles.mercadoResumo}>
-            {mercado.vagas !== null && (
-              <div className={styles.resumoCard}>
-                <strong>{mercado.vagas.toLocaleString("pt-BR")}</strong>
-                <span>vagas agregadas</span>
-              </div>
-            )}
-            {mercado.frequenciaPct !== null && (
-              <div className={styles.resumoCard}>
-                <strong>{mercado.frequenciaPct.toFixed(1)}%</strong>
-                <span>do dataset de vagas</span>
-              </div>
-            )}
-            {mercado.salarios.length > 0 && (
-              <div className={styles.resumoCard}>
-                <strong>
-                  ${Math.round(mercado.salarios[0].p50).toLocaleString("en-US")}
-                </strong>
-                <span>mediana inicial ({mercado.salarios[0].moeda})</span>
-              </div>
-            )}
-          </div>
-
-          <div className="bloco">
-            <div className="bloco-titulo">
-              <Coins size={16} />
-              Salários por nível de senioridade
+        <>
+          <div className={styles.painel}>
+            <div className={styles.painelCelula}>
+              <span className="rotulo">vagas agregadas</span>
+              <strong className={styles.painelNumero}>
+                {mercado.vagas !== null ? mercado.vagas.toLocaleString("pt-BR") : "—"}
+              </strong>
             </div>
+            <div className={styles.painelCelula}>
+              <span className="rotulo">frequência no dataset</span>
+              <strong className={styles.painelNumero}>
+                {mercado.frequenciaPct !== null ? `${mercado.frequenciaPct.toFixed(1)}%` : "—"}
+              </strong>
+            </div>
+            <div className={styles.painelCelula}>
+              <span className="rotulo">mediana inicial</span>
+              <strong className={styles.painelNumero}>{inicial ? usd(inicial.p50) : "—"}</strong>
+            </div>
+            <div className={styles.painelCelula}>
+              <span className="rotulo">faixas de nível</span>
+              <strong className={styles.painelNumero}>{mercado.salarios.length}</strong>
+            </div>
+          </div>
+          {mercado.fonte && <p className={styles.fonte}>Fonte: {mercado.fonte} · valores em USD</p>}
+
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>Salário por senioridade</h2>
+            <span className={styles.secaoMeta}>percentis p25 · mediana · p75 · p90</span>
+          </div>
+          <div className={styles.corpoBloco}>
             <BarrasSalario salarios={mercado.salarios} />
-            <p className={styles.fonte}>Fonte: {mercado.fonte}</p>
           </div>
 
           {topSkills.length > 0 && (
-            <div className="bloco">
-              <div className="bloco-titulo">
-                <ClipboardList size={16} />
-                Habilidades mais pedidas nas vagas reais
+            <>
+              <div className={styles.cabecalhoSecao}>
+                <h2 className={styles.secaoTitulo}>Habilidades mais pedidas</h2>
+                <span className={styles.secaoMeta}>% das vagas da ocupação que citam a skill</span>
               </div>
-              <div className={styles.topSkills}>
-                {topSkills.map((h) => (
-                  <Link
-                    key={h.habilidadeId}
-                    href={`/habilidades/${h.habilidadeId}`}
-                    className={styles.topSkill}
-                  >
-                    <span className={styles.topSkillNome}>{h.nome}</span>
-                    <span className={styles.topSkillPct}>{h.pctVagas.toFixed(1)}%</span>
-                  </Link>
-                ))}
+              <div className={styles.corpoBloco}>
+                <div className={styles.skillsMercado}>
+                  {topSkills.map((h) => (
+                    <Link key={h.habilidadeId} href={`/habilidades/${h.habilidadeId}`} className={styles.skillMercado}>
+                      <span className={styles.skillNome}>{h.nome}</span>
+                      <span className={styles.skillTrilha} aria-hidden="true">
+                        <span style={{ width: `${Math.min(h.pctVagas, 100)}%` }} />
+                      </span>
+                      <span className={styles.skillPct}>{h.pctVagas.toFixed(1)}%</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            </>
           )}
-        </section>
+        </>
       )}
 
       {trilha && trilha.proximasOcupacoes.length > 0 && (
-        <section>
-          <h2 className="titulo-secao">
-            <Map size={18} />
-            Trilha de progressão
-          </h2>
-          <p className={styles.secaoSub}>
-            Ocupações que usam as mesmas habilidades essenciais em nível superior — e o que você
-            ainda precisaria aprender.
+        <>
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>Trilha de progressão</h2>
+            <span className={styles.secaoMeta}>mesmas habilidades essenciais, nível acima</span>
+          </div>
+          <p className={styles.nota}>
+            Ocupações que compartilham a base desta função e o que falta para chegar lá.
           </p>
-          <div className="grid-cards">
-            {trilha.proximasOcupacoes.map((p) => (
-              <CardOcupacao
-                key={p.ocupacaoId}
-                ocupacao={{ ocupacaoId: p.ocupacaoId, titulo: p.titulo }}
-                extra={`${p.compartilhadas} skills em comum`}
-                sub={
-                  p.habilidadesFaltantes
-                    ? `A aprender: ${p.habilidadesFaltantes}`
-                    : undefined
-                }
-              />
+          <div className={styles.trilha}>
+            {trilha.proximasOcupacoes.map((p, i) => (
+              <Link key={p.ocupacaoId} href={`/ocupacoes/${p.ocupacaoId}`} className={styles.trilhaLinha}>
+                <span className={styles.numero}>{String(i + 1).padStart(2, "0")}</span>
+                <span className={styles.trilhaNome}>{p.titulo}</span>
+                <span className={styles.trilhaMeta}>
+                  {p.compartilhadas} skills em comum · nível médio {p.nivelMedioDestino}
+                </span>
+                <span className={styles.trilhaGap}>
+                  {p.habilidadesFaltantes ? `a aprender: ${p.habilidadesFaltantes}` : "sem gap essencial"}
+                </span>
+              </Link>
             ))}
           </div>
-        </section>
+        </>
       )}
 
       {(essenciais.length > 0 || complementares.length > 0) && (
-        <section>
-          <h2 className="titulo-secao">
-            <GraduationCap size={18} />
-            Habilidades da ocupação
-          </h2>
-          <h3 className={styles.subLista}>
-            <Users size={14} /> Essenciais ({essenciais.length})
-          </h3>
-          <div className={styles.listaSkills}>
+        <>
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>Habilidades da ocupação</h2>
+            <span className={styles.secaoMeta}>
+              {essenciais.length} essenciais · {complementares.length} complementares
+            </span>
+          </div>
+          <div className={styles.skills}>
             {essenciais.map((v) => (
               <SkillVinculo key={v.habilidadeId} vinculo={v} />
             ))}
           </div>
+
           {complementares.length > 0 && (
-            <details className="acordeao" style={{ marginTop: 16 }}>
-              <summary>Complementares ({complementares.length})</summary>
-              <div className={`acordeao-corpo ${styles.listaSkills}`}>
+            <details className={`acordeao ${styles.complementares}`}>
+              <summary>
+                <span className="rotulo">complementares</span>
+                <span>{complementares.length} habilidades de apoio</span>
+              </summary>
+              <div className={`acordeao-corpo ${styles.skills}`}>
                 {complementares.map((v) => (
                   <SkillVinculo key={v.habilidadeId} vinculo={v} />
                 ))}
               </div>
             </details>
           )}
-        </section>
+        </>
       )}
     </div>
   );
@@ -167,11 +173,10 @@ function SkillVinculo({ vinculo }: { vinculo: OcupacaoHabilidades }) {
     <Link href={`/habilidades/${vinculo.habilidadeId}`} className={styles.skill}>
       <div className={styles.skillTopo}>
         <span className={styles.skillNome}>{vinculo.nome}</span>
+        {vinculo.codigo && <span className="codigo-sfia">{vinculo.codigo}</span>}
         <BadgeNivel nivel={vinculo.nivelHabilidade} />
       </div>
-      {vinculo.justificativa && (
-        <p className={styles.skillJust}>{vinculo.justificativa}</p>
-      )}
+      {vinculo.justificativa && <p className={styles.skillJust}>{vinculo.justificativa}</p>}
     </Link>
   );
 }

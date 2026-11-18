@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Briefcase, GraduationCap, Search } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { ResultadoBusca } from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
@@ -20,22 +19,27 @@ export default async function Busca({
 
   return (
     <div className="container">
-      <h1 className="titulo-pagina" style={{ paddingTop: 30 }}>Busca inteligente</h1>
-      <p className="subtitulo-pagina">
-        Acha habilidades e ocupações mesmo com erro de digitação ou sem acento.
-      </p>
-      <SearchBar placeholder="Ex.: kubernet, cienista de dados, phyton..." />
+      <div className={styles.cabeca}>
+        <span className="rotulo">busca única · habilidades e ocupações</span>
+        <h1 className="titulo-pagina">Busca inteligente</h1>
+        <p className="subtitulo-pagina">
+          Ignora acentos, maiúsculas e erros de digitação — “kubernet” encontra Kubernetes.
+        </p>
+        <SearchBar />
+      </div>
 
       {termo && (
         <>
-          <h2 className="titulo-secao">
-            <Search size={18} />
-            {resultados.length} resultado{resultados.length === 1 ? "" : "s"} para “{termo}”
-          </h2>
+          <div className={styles.cabecalhoSecao}>
+            <h2 className={styles.secaoTitulo}>“{termo}”</h2>
+            <span className={styles.secaoMeta}>
+              {resultados.length} {resultados.length === 1 ? "resultado" : "resultados"}
+            </span>
+          </div>
           {resultados.length === 0 ? (
             <div className="vazio">
               <strong>Nada encontrado</strong>
-              Tente outro termo — a busca tolera erros, mas precisa de alguma semelhança.
+              Tente um termo mais curto ou o nome em inglês; a busca tolera erros, mas precisa de alguma semelhança.
             </div>
           ) : (
             <div className={styles.lista}>
@@ -45,14 +49,9 @@ export default async function Busca({
                   href={r.tipo === "ocupacao" ? `/ocupacoes/${r.id}` : `/habilidades/${r.id}`}
                   className={`card ${styles.item}`}
                 >
-                  <span className={r.tipo === "ocupacao" ? styles.iconeOcup : styles.iconeHab}>
-                    {r.tipo === "ocupacao" ? <Briefcase size={15} /> : <GraduationCap size={15} />}
-                  </span>
+                  <span className={styles.tipo}>{r.tipo === "ocupacao" ? "ocupa" : "habil"}</span>
                   <span className={styles.nome}>{r.nome}</span>
                   {r.codigo && <span className="codigo-sfia">{r.codigo}</span>}
-                  <span className={`chip chip-cinza ${styles.tipo}`}>
-                    {r.tipo === "ocupacao" ? "ocupação" : "habilidade"}
-                  </span>
                   <span className={styles.score}>{Math.round(r.score * 100)}%</span>
                 </Link>
               ))}

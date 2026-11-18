@@ -1,23 +1,30 @@
 .faixa {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 8px;
 }
 
-.ponto {
-  width: 7px;
-  height: 7px;
-  border-radius: 3px;
-  background: var(--borda);
+.tiques { display: inline-flex; gap: 2px; align-items: flex-end; }
+
+.tique {
+  width: 3px;
+  height: 6px;
+  background: var(--linha);
 }
 
-.ativo {
-  background: var(--rosa-forte);
-}
+.tique:nth-child(2) { height: 7px; }
+.tique:nth-child(3) { height: 8px; }
+.tique:nth-child(4) { height: 9px; }
+.tique:nth-child(5) { height: 10px; }
+.tique:nth-child(6) { height: 11px; }
+.tique:nth-child(7) { height: 12px; }
+
+.ativo { background: var(--rosa); }
 
 .rotulo {
-  margin-left: 5px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--rosa);
+  font-family: var(--fonte-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
 }

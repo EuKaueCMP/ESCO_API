@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Briefcase, GraduationCap, Map } from "lucide-react";
 import styles from "./Header.module.css";
 
 const LINKS = [
-  { href: "/temas", label: "Temas", icone: Compass },
-  { href: "/habilidades", label: "Habilidades", icone: GraduationCap },
-  { href: "/ocupacoes", label: "Ocupações", icone: Briefcase },
-  { href: "/niveis", label: "Níveis", icone: Map },
+  { href: "/temas", label: "temas" },
+  { href: "/habilidades", label: "habilidades" },
+  { href: "/ocupacoes", label: "ocupações" },
+  { href: "/niveis", label: "níveis" },
 ];
 
 export default function Header() {
@@ -19,20 +18,31 @@ export default function Header() {
     <header className={styles.header}>
       <div className={`container ${styles.conteudo}`}>
         <Link href="/" className={styles.logo}>
-          ESCO<span className={styles.logoPonto}>·</span>SFIA
+          <span className={styles.marca}>RBOSF</span>
+          <span className={styles.tag}>índice aberto</span>
         </Link>
-        <nav className={styles.nav}>
-          {LINKS.map(({ href, label, icone: Icone }) => (
+
+        <nav className={styles.nav} aria-label="Principal">
+          {LINKS.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               className={`${styles.link} ${caminho.startsWith(href) ? styles.ativo : ""}`}
             >
-              <Icone size={15} strokeWidth={2.2} />
-              <span>{label}</span>
+              {label}
             </Link>
           ))}
         </nav>
+
+        <button
+          type="button"
+          className={styles.paleta}
+          onClick={() => window.dispatchEvent(new CustomEvent("abrir-paleta"))}
+          aria-label="Abrir busca rápida (Cmd K)"
+        >
+          <span className={styles.paletaTexto}>buscar</span>
+          <kbd>⌘K</kbd>
+        </button>
       </div>
     </header>
   );
