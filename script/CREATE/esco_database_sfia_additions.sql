@@ -96,3 +96,45 @@ CREATE TABLE IF NOT EXISTS sfia_view_habilidade
     habilidade_id INTEGER NOT NULL REFERENCES habilidade (habilidade_id) ON DELETE CASCADE,
     PRIMARY KEY (caminho, habilidade_id)
 );
+
+-- dado real de mercado (vagas/salarios/skills por demanda)
+CREATE TABLE IF NOT EXISTS mercado_ocupacao
+(
+    ocupacao_id INTEGER PRIMARY KEY REFERENCES ocupacao (ocupacao_id) ON DELETE CASCADE,
+    vagas INTEGER NOT NULL,
+    frequencia_pct NUMERIC(6,3) NOT NULL,
+    fonte TEXT NOT NULL,
+    atualizado_em DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+CREATE TABLE IF NOT EXISTS mercado_salario
+(
+    ocupacao_id INTEGER NOT NULL REFERENCES ocupacao (ocupacao_id) ON DELETE CASCADE,
+    nivel SMALLINT NOT NULL REFERENCES nivel_habilidade (nivel),
+    amostra INTEGER NOT NULL,
+    p25 NUMERIC NOT NULL,
+    p50 NUMERIC NOT NULL,
+    p75 NUMERIC NOT NULL,
+    p90 NUMERIC NOT NULL,
+    moeda CHAR(3) NOT NULL,
+    fonte TEXT NOT NULL,
+    atualizado_em DATE NOT NULL DEFAULT CURRENT_DATE,
+    PRIMARY KEY (ocupacao_id, nivel)
+);
+
+CREATE TABLE IF NOT EXISTS mercado_habilidade
+(
+    ocupacao_id INTEGER NOT NULL REFERENCES ocupacao (ocupacao_id) ON DELETE CASCADE,
+    habilidade_id INTEGER NOT NULL REFERENCES habilidade (habilidade_id) ON DELETE CASCADE,
+    vagas INTEGER NOT NULL,
+    pct_vagas NUMERIC(6,3) NOT NULL,
+    fonte TEXT NOT NULL,
+    atualizado_em DATE NOT NULL DEFAULT CURRENT_DATE,
+    PRIMARY KEY (ocupacao_id, habilidade_id)
+);
+
+-- busca fuzzy (pg_trgm + unaccent)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;
+CREATE INDEX IF NOT EXISTS idx_habilidade_nome_trgm ON habilidade USING gin (nome gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_ocupacao_titulo_trgm ON ocupacao USING gin (titulo gin_trgm_ops);

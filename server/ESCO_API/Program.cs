@@ -81,6 +81,9 @@ builder.Services.AddScoped<SfiaService>();
 builder.Services.AddScoped<IMercadoRepository, MercadoRepository>();
 builder.Services.AddScoped<MercadoService>();
 
+builder.Services.AddScoped<IBuscaRepository, BuscaRepository>();
+builder.Services.AddScoped<BuscaService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
