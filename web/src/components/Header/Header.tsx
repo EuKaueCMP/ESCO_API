@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle/ThemeToggle";
 import styles from "./Header.module.css";
 
 const LINKS = [
@@ -34,6 +35,8 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+
+        <ThemeToggle />
 
         <button
           type="button"

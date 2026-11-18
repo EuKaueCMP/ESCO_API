@@ -17,10 +17,10 @@ export default async function OcupacaoPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pskills?: string }>;
+  searchParams: Promise<{ pskills?: string; pcomp?: string }>;
 }) {
   const { id } = await params;
-  const { pskills } = await searchParams;
+  const { pskills, pcomp } = await searchParams;
   const ocupacaoId = Number(id);
   if (!Number.isFinite(ocupacaoId)) notFound();
 
@@ -45,6 +45,9 @@ export default async function OcupacaoPage({
   const totalPaginasSkills = totalDePaginas(essenciais.length);
   const paginaSkills = paginaValida(pskills, totalPaginasSkills);
   const essenciaisVisiveis = fatiar(essenciais, paginaSkills);
+  const totalPaginasComplementares = totalDePaginas(complementares.length);
+  const paginaComplementares = paginaValida(pcomp, totalPaginasComplementares);
+  const complementaresVisiveis = fatiar(complementares, paginaComplementares);
   const topSkills = (mercado?.habilidades ?? []).slice(0, 10);
   const inicial = mercado?.salarios?.[0];
 
@@ -167,20 +170,41 @@ export default async function OcupacaoPage({
           <Paginacao
             paginaAtual={paginaSkills}
             totalPaginas={totalPaginasSkills}
-            hrefPagina={(n) => hrefCom(`/ocupacoes/${ocupacaoId}`, { pskills: n })}
+            hrefPagina={(n) =>
+              hrefCom(`/ocupacoes/${ocupacaoId}`, {
+                pskills: n,
+                pcomp: paginaComplementares > 1 ? paginaComplementares : undefined,
+              })
+            }
           />
 
           {complementares.length > 0 && (
-            <details className={`acordeao ${styles.complementares}`}>
+            <details
+              className={`acordeao ${styles.complementares}`}
+              open={paginaComplementares > 1}
+            >
               <summary>
                 <span className="rotulo">complementares</span>
-                <span>{complementares.length} habilidades de apoio</span>
+                <span>
+                  {complementares.length} habilidades de apoio · página {paginaComplementares} de{" "}
+                  {totalPaginasComplementares}
+                </span>
               </summary>
               <div className={`acordeao-corpo ${styles.skills}`}>
-                {complementares.map((v) => (
+                {complementaresVisiveis.map((v) => (
                   <SkillVinculo key={v.habilidadeId} vinculo={v} />
                 ))}
               </div>
+              <Paginacao
+                paginaAtual={paginaComplementares}
+                totalPaginas={totalPaginasComplementares}
+                hrefPagina={(n) =>
+                  hrefCom(`/ocupacoes/${ocupacaoId}`, {
+                    pskills: paginaSkills > 1 ? paginaSkills : undefined,
+                    pcomp: n,
+                  })
+                }
+              />
             </details>
           )}
         </>

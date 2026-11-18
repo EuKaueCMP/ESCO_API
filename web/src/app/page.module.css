@@ -5,7 +5,8 @@
   padding: 72px 0 56px;
   border-bottom: 1px solid var(--linha);
   background:
-    radial-gradient(680px 260px at 22% 118%, rgba(233, 147, 181, 0.085), transparent 72%);
+    radial-gradient(680px 260px at 22% 118%, rgba(233, 147, 181, 0.085), transparent 72%),
+    radial-gradient(520px 240px at 84% -12%, var(--marrom-lavado), transparent 70%);
 }
 
 .heroTexto { display: grid; gap: 18px; justify-items: start; max-width: 760px; }

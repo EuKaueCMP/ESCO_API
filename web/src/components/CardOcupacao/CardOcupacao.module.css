@@ -1,5 +1,8 @@
 .card { min-width: 0; }
 
+.card > * { transition: transform 0.2s ease; }
+.card:hover > * { transform: translateX(6px); }
+
 .sub {
   color: var(--texto-3);
   font-size: 0.81rem;

@@ -14,8 +14,41 @@
   --verde: #a5d9bc;
   --verde-vivo: #6fbf92;
   --verde-lavado: rgba(165, 217, 188, 0.07);
+  --marrom: #b07a5a;
+  --marrom-vivo: #c98f6a;
+  --marrom-lavado: rgba(176, 122, 90, 0.12);
+  --fundo-header: rgba(22, 18, 22, 0.85);
+  --veu: rgba(10, 8, 10, 0.62);
+  --ruido-opacidade: 0.028;
+  --texto-sobre-rosa: #241019;
   --raio: 2px;
   --raio-ctl: 4px;
+}
+
+html[data-theme="claro"] {
+  color-scheme: light;
+  --tinta: #f6f0e9;
+  --tinta-2: #efe6dc;
+  --superficie: #e8ddd1;
+  --superficie-2: #e1d4c6;
+  --linha: #d5c4b5;
+  --linha-fraca: #e4d7ca;
+  --texto: #2b211d;
+  --texto-2: #5c4a40;
+  --texto-3: #8a7568;
+  --rosa: #c96f91;
+  --rosa-viva: #b84f78;
+  --rosa-lavado: rgba(201, 111, 145, 0.10);
+  --verde: #4f8a6a;
+  --verde-vivo: #357a56;
+  --verde-lavado: rgba(79, 138, 106, 0.08);
+  --marrom: #7a4a35;
+  --marrom-vivo: #8e563d;
+  --marrom-lavado: rgba(122, 74, 53, 0.10);
+  --fundo-header: rgba(246, 240, 233, 0.88);
+  --veu: rgba(43, 33, 29, 0.35);
+  --ruido-opacidade: 0.018;
+  --texto-sobre-rosa: #2b121b;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,10 +56,12 @@
 html {
   color-scheme: dark;
   scroll-behavior: auto;
+  background: var(--tinta);
 }
 
 body {
-  background: var(--tinta);
+  background-color: var(--tinta);
+  background-image: radial-gradient(1200px 720px at 88% -12%, var(--marrom-lavado), transparent 62%);
   color: var(--texto);
   font-family: var(--fonte-sans), system-ui, sans-serif;
   font-size: 16px;
@@ -41,12 +76,12 @@ body::after {
   inset: 0;
   z-index: 100;
   pointer-events: none;
-  opacity: 0.028;
+  opacity: var(--ruido-opacidade);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px;
 }
 
-::selection { background: var(--rosa); color: var(--tinta); }
+::selection { background: var(--rosa); color: var(--texto-sobre-rosa); }
 
 :focus-visible { outline: 1px solid var(--rosa-viva); outline-offset: 3px; }
 
@@ -133,8 +168,8 @@ a.card::after {
 }
 
 a.card:hover {
-  border-top-color: var(--rosa-viva);
-  background: linear-gradient(90deg, rgba(243, 188, 208, 0.035), transparent 65%);
+  border-top-color: var(--marrom-vivo);
+  background: linear-gradient(90deg, var(--marrom-lavado), transparent 65%);
 }
 
 a.card:hover::after { opacity: 1; transform: none; }
@@ -231,7 +266,7 @@ a.card:hover::after { opacity: 1; transform: none; }
   align-items: center;
   gap: 7px;
   background: var(--rosa-viva);
-  color: #241019;
+  color: var(--texto-sobre-rosa);
   border: none;
   border-radius: var(--raio-ctl);
   padding: 9px 16px;

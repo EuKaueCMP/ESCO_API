@@ -1,0 +1,122 @@
+.cabecalho {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+  margin-top: 56px;
+}
+
+.titulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.meta {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--texto-3);
+  margin-left: auto;
+}
+
+.link {
+  font-family: var(--fonte-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  transition: color 0.2s ease;
+}
+
+.link:hover { color: var(--marrom); }
+
+.areas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 44px;
+  margin-top: 18px;
+}
+
+.area {
+  align-self: start;
+  border-top: 1px solid var(--linha-fraca);
+  padding-top: 14px;
+}
+
+.areaCabeca {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  align-items: baseline;
+}
+
+.areaTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+.areaMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  text-align: right;
+}
+
+.areaDesc {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--texto-3);
+}
+
+.grupos {
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 10px;
+}
+
+.grupo {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 18px;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linha-fraca);
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+
+.grupo:hover {
+  background: linear-gradient(90deg, var(--marrom-lavado), transparent 55%);
+  padding-left: 6px;
+}
+
+.codigo {
+  font-family: var(--fonte-mono);
+  font-size: 0.62rem;
+  color: var(--marrom);
+  font-variant-numeric: tabular-nums;
+}
+
+.nome {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--texto-2);
+}
+
+.seta {
+  font-family: var(--fonte-mono);
+  color: var(--texto-3);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.grupo:hover .seta { color: var(--rosa-viva); transform: translateX(4px); }
+
+@media (max-width: 700px) {
+  .areas { grid-template-columns: 1fr; }
+  .meta { display: none; }
+}

@@ -5,6 +5,7 @@ using RBOSF_API.Interfaces;
 using RBOSF_API.Repositories;
 using RBOSF_API.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Reflection;
@@ -89,6 +90,13 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(policy => policy
+        .Expire(TimeSpan.FromMinutes(30))
+        .SetVaryByQuery("*"));
+});
+
 //? Importando o Cors policy
 builder.Services.AddCors(option =>
 {
@@ -122,12 +130,35 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<RbosfContext>();
+        var ocupacaoId = await db.Ocupacao
+            .OrderBy(o => o.OcupacaoId)
+            .Select(o => o.OcupacaoId)
+            .FirstOrDefaultAsync();
+
+        if (ocupacaoId > 0)
+        {
+            var ocupacaoService = scope.ServiceProvider.GetRequiredService<OcupacaoService>();
+            await ocupacaoService.ListarTrilhaPorOcupacaoId(ocupacaoId);
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "Falha ao pré-aquecer o banco de dados.");
+    }
+}
 
 app.UseCors("CorsPolicy");
 
 //? Swagger UI (documentação interativa da API)
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseOutputCache();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

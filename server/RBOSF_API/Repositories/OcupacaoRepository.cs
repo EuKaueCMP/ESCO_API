@@ -35,15 +35,18 @@ namespace RBOSF_API.Repositories
         public async Task<List<Ocupacao>?> ListarPorGrupo(int grupoId)
         {
             var grupo = await _ctx.GrupoOcupacao
+                .AsNoTracking()
                 .FirstOrDefaultAsync(g => g.GrupoId == grupoId);
 
             if (grupo is null)
                 return null;
 
-            return grupo.Ocupacao
+            return await _ctx.Ocupacao
+                .Include(o => o.GrupoOcupacao)
+                .Where(o => o.GrupoOcupacao.Codigo.StartsWith(grupo.Codigo))
                 .OrderByDescending(o => o.PesoRelevancia)
                 .ThenBy(o => o.Titulo)
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<List<ListarHabilidadePorOcupacaoDto>?> ListarHabilidadesPorOcupacaoId(int ocupacaoId)
@@ -136,36 +139,53 @@ namespace RBOSF_API.Repositories
 
             return await _ctx.Database
                 .SqlQuery<ProximaOcupacaoTrilha>($"""
+                    WITH alvo AS (
+                        SELECT habilidade_id
+                        FROM esco_dataset.ocupacao_habilidade
+                        WHERE ocupacao_id = {ocupacaoId}
+                          AND tipo_relacionamento = 'essencial'
+                    ), alvo_todas AS (
+                        SELECT habilidade_id
+                        FROM esco_dataset.ocupacao_habilidade
+                        WHERE ocupacao_id = {ocupacaoId}
+                    ), alvo_media AS (
+                        SELECT avg(nivel_habilidade) + 0.25 AS limite
+                        FROM esco_dataset.ocupacao_habilidade
+                        WHERE ocupacao_id = {ocupacaoId}
+                    ), candidatas AS (
+                        SELECT vh.ocupacao_id,
+                               count(DISTINCT vh.habilidade_id) AS compartilhadas,
+                               round(avg(vh.nivel_habilidade)::numeric, 1) AS nivel_medio
+                        FROM esco_dataset.ocupacao_habilidade vh
+                        JOIN alvo ON alvo.habilidade_id = vh.habilidade_id
+                        JOIN esco_dataset.ocupacao o ON o.ocupacao_id = vh.ocupacao_id
+                        WHERE vh.ocupacao_id <> {ocupacaoId}
+                          AND vh.tipo_relacionamento = 'essencial'
+                          AND o.peso_relevancia = 5
+                        GROUP BY vh.ocupacao_id
+                        HAVING avg(vh.nivel_habilidade) > (SELECT limite FROM alvo_media)
+                        ORDER BY compartilhadas DESC
+                        LIMIT 8
+                    )
                     SELECT o.ocupacao_id AS "OcupacaoId",
                            o.titulo AS "Titulo",
-                           count(DISTINCT vh.habilidade_id) AS "Compartilhadas",
-                           round(avg(vh.nivel_habilidade)::numeric, 1) AS "NivelMedioDestino",
+                           c.compartilhadas AS "Compartilhadas",
+                           c.nivel_medio AS "NivelMedioDestino",
                            (SELECT string_agg(f.nome, ' | ') FROM (
                                 SELECT h2.nome
                                 FROM esco_dataset.ocupacao_habilidade vh2
                                 JOIN esco_dataset.habilidade h2 ON h2.habilidade_id = vh2.habilidade_id
-                                WHERE vh2.ocupacao_id = o.ocupacao_id
+                                WHERE vh2.ocupacao_id = c.ocupacao_id
                                   AND vh2.tipo_relacionamento = 'essencial'
-                                  AND vh2.habilidade_id NOT IN (
-                                      SELECT habilidade_id FROM esco_dataset.ocupacao_habilidade
-                                      WHERE ocupacao_id = {ocupacaoId})
-                                ORDER BY vh2.nivel_habilidade
+                                  AND NOT EXISTS (
+                                      SELECT 1 FROM alvo_todas
+                                      WHERE alvo_todas.habilidade_id = vh2.habilidade_id)
+                                ORDER BY vh2.nivel_habilidade, h2.nome
                                 LIMIT 5
                            ) f) AS "HabilidadesFaltantes"
-                    FROM esco_dataset.ocupacao_habilidade vh
-                    JOIN esco_dataset.ocupacao o ON o.ocupacao_id = vh.ocupacao_id
-                    JOIN (SELECT habilidade_id
-                          FROM esco_dataset.ocupacao_habilidade
-                          WHERE ocupacao_id = {ocupacaoId} AND tipo_relacionamento = 'essencial') e
-                         ON e.habilidade_id = vh.habilidade_id
-                    WHERE vh.ocupacao_id <> {ocupacaoId}
-                      AND vh.tipo_relacionamento = 'essencial'
-                    GROUP BY o.ocupacao_id, o.titulo
-                    HAVING avg(vh.nivel_habilidade) > (SELECT avg(nivel_habilidade) + 0.25
-                                                       FROM esco_dataset.ocupacao_habilidade
-                                                       WHERE ocupacao_id = {ocupacaoId} AND peso_relevancia = 5)
-                    ORDER BY count(DISTINCT vh.habilidade_id) DESC
-                    LIMIT 8
+                    FROM candidatas c
+                    JOIN esco_dataset.ocupacao o ON o.ocupacao_id = c.ocupacao_id
+                    ORDER BY c.compartilhadas DESC
                     """)
                 .ToListAsync();
         }

@@ -1,8 +1,48 @@
 .cabeca { padding-top: 46px; }
 .cabeca :global(.rotulo) { display: block; margin-bottom: 14px; }
 
-.indice {
+.macroareas {
+  display: grid;
+  gap: 44px;
+  margin-top: 18px;
+}
+
+.macroareaCabeca {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
   border-top: 1px solid var(--linha);
+  padding-top: 14px;
+}
+
+.macroareaTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 600;
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  color: var(--texto);
+}
+
+.macroareaDesc {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--texto-3);
+}
+
+.macroareaMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  text-align: right;
+  margin-left: auto;
+}
+
+.indice {
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 10px;
 }
 
 .linha {
@@ -50,6 +90,7 @@
 .linha:hover .seta { color: var(--rosa-viva); transform: translateX(4px); }
 
 @media (max-width: 640px) {
+  .macroareaMeta { display: none; }
   .linha { grid-template-columns: 34px minmax(0, 1fr) 20px; }
   .meta { display: none; }
 }

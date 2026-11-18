@@ -40,8 +40,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${sans.variable} ${mono.variable} ${serif.variable}`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("rbosf-tema");var c=window.matchMedia("(prefers-color-scheme: light)").matches?"claro":"escuro";document.documentElement.dataset.theme=(t==="claro"||t==="escuro")?t:c;}catch(e){document.documentElement.dataset.theme=window.matchMedia("(prefers-color-scheme: light)").matches?"claro":"escuro";}})();`,
+          }}
+        />
+      </head>
       <body>
         <Header />
         <main>{children}</main>

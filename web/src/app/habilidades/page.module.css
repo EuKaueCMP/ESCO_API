@@ -59,13 +59,61 @@
   margin-left: auto;
 }
 
-.temas {
+.macroareas {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 44px;
-  border-top: 1px solid var(--linha-fraca);
-  margin-top: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 44px;
+  margin-top: 18px;
 }
+
+.macroarea {
+  align-self: start;
+  border-top: 1px solid var(--linha);
+  padding-top: 14px;
+}
+
+.macroareaCabeca {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  align-items: baseline;
+}
+
+.macroareaTitulo {
+  font-family: var(--fonte-serif);
+  font-weight: 400;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.macroareaMeta {
+  font-family: var(--fonte-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  text-align: right;
+}
+
+.macroareaDesc {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--texto-3);
+}
+
+.listaTemas {
+  border-top: 1px solid var(--linha-fraca);
+  margin-top: 10px;
+}
+
+.macroarea .tema {
+  grid-template-columns: 26px minmax(0, 1fr) 18px;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.macroarea .temaNome { font-size: 1.02rem; }
 
 .tema, .popular {
   display: grid;
@@ -112,5 +160,5 @@
 .populares { border-top: 1px solid var(--linha-fraca); margin-top: 14px; }
 
 @media (max-width: 700px) {
-  .temas { grid-template-columns: 1fr; }
+  .macroareas { grid-template-columns: 1fr; }
 }

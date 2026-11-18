@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { apiGet } from "@/lib/api";
-import type { HabilidadeTermo, ResumoClassificacao, SfiaView } from "@/lib/tipagem";
+import type {
+  GrupoOcupacao,
+  HabilidadeTermo,
+  ResumoClassificacao,
+  SfiaView,
+} from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import CardHabilidade from "@/components/CardHabilidade/CardHabilidade";
+import AreasOcupacao from "@/components/AreasOcupacao/AreasOcupacao";
 import Paginacao from "@/components/Paginacao/Paginacao";
 import { ITENS_POR_PAGINA, fatiar, hrefCom, paginaValida, totalDePaginas } from "@/lib/paginacao";
+import { agruparTemas } from "@/lib/temas";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -35,10 +42,15 @@ export default async function Habilidades({
 
   const resumo = await apiGet<ResumoClassificacao>("/habilidade/resumo");
 
-  const raizes =
-    filtro === "todas" && !termo
-      ? ((await apiGet<SfiaView[]>("/sfia/view")) ?? []).filter((v) => v.profundidade === 1)
-      : [];
+  const exibirTemas = filtro === "todas" && !termo;
+  const [views, grupos]: [SfiaView[] | null, GrupoOcupacao[] | null] = exibirTemas
+    ? await Promise.all([
+        apiGet<SfiaView[]>("/sfia/view"),
+        apiGet<GrupoOcupacao[]>("/grupoOcupacao"),
+      ])
+    : [null, null];
+  const gruposTemas = agruparTemas(views ?? []);
+  const totalDominios = (views ?? []).filter((v) => v.profundidade === 1).length;
 
   let resultados: HabilidadeTermo[] | null = null;
   let total = 0;
@@ -153,17 +165,34 @@ export default async function Habilidades({
         <>
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Navegue por tema</h2>
-            <span className={styles.secaoMeta}>12 domínios · sub-temas em árvore</span>
+            <span className={styles.secaoMeta}>
+              {gruposTemas.length} macroáreas · {totalDominios} domínios · sub-temas em árvore
+            </span>
           </div>
-          <div className={styles.temas}>
-            {raizes.map((r, i) => (
-              <Link key={r.viewId} href={`/temas/${r.viewId}`} className={styles.tema}>
-                <span className={styles.numero}>{String(i + 1).padStart(2, "0")}</span>
-                <span className={styles.temaNome}>{r.nome}</span>
-                <span className={styles.seta} aria-hidden="true">→</span>
-              </Link>
+          <div className={styles.macroareas}>
+            {gruposTemas.map((grupo) => (
+              <section key={grupo.slug} className={styles.macroarea}>
+                <div className={styles.macroareaCabeca}>
+                  <span className={styles.macroareaTitulo}>{grupo.nome}</span>
+                  <span className={styles.macroareaMeta}>
+                    {grupo.temas.length} {grupo.temas.length === 1 ? "domínio" : "domínios"}
+                  </span>
+                  <p className={styles.macroareaDesc}>{grupo.descricao}</p>
+                </div>
+                <div className={styles.listaTemas}>
+                  {grupo.temas.map((r, i) => (
+                    <Link key={r.viewId} href={`/temas/${r.viewId}`} className={styles.tema}>
+                      <span className={styles.numero}>{String(i + 1).padStart(2, "0")}</span>
+                      <span className={styles.temaNome}>{r.nome}</span>
+                      <span className={styles.seta} aria-hidden="true">→</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
+
+          <AreasOcupacao grupos={grupos ?? []} />
 
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Atalhos por código</h2>
