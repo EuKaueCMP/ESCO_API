@@ -27,6 +27,12 @@ public partial class EscoContext : DbContext
     public virtual DbSet<SfiaView> SfiaView { get; set; }
 
     public virtual DbSet<SfiaViewHabilidade> SfiaViewHabilidade { get; set; }
+
+    public virtual DbSet<MercadoOcupacao> MercadoOcupacao { get; set; }
+
+    public virtual DbSet<MercadoSalario> MercadoSalario { get; set; }
+
+    public virtual DbSet<MercadoHabilidade> MercadoHabilidade { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -399,6 +405,75 @@ public partial class EscoContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.HabilidadeId)
                 .HasConstraintName("sfia_view_habilidade_habilidade_id_fkey");
+        });
+
+        // Dado real de mercado (vagas e salarios)
+        modelBuilder.Entity<MercadoOcupacao>(entity =>
+        {
+            entity.ToTable("mercado_ocupacao", "esco_dataset");
+
+            entity.HasKey(e => e.OcupacaoId)
+                .HasName("mercado_ocupacao_pkey");
+
+            entity.Property(e => e.OcupacaoId).HasColumnName("ocupacao_id");
+            entity.Property(e => e.Vagas).HasColumnName("vagas");
+            entity.Property(e => e.FrequenciaPct).HasColumnName("frequencia_pct");
+            entity.Property(e => e.Fonte).HasColumnName("fonte");
+            entity.Property(e => e.AtualizadoEm).HasColumnName("atualizado_em");
+
+            entity.HasOne(e => e.Ocupacao)
+                .WithMany()
+                .HasForeignKey(e => e.OcupacaoId)
+                .HasConstraintName("mercado_ocupacao_ocupacao_id_fkey");
+        });
+
+        modelBuilder.Entity<MercadoSalario>(entity =>
+        {
+            entity.ToTable("mercado_salario", "esco_dataset");
+
+            entity.HasKey(e => new { e.OcupacaoId, e.Nivel })
+                .HasName("mercado_salario_pkey");
+
+            entity.Property(e => e.OcupacaoId).HasColumnName("ocupacao_id");
+            entity.Property(e => e.Nivel).HasColumnName("nivel");
+            entity.Property(e => e.Amostra).HasColumnName("amostra");
+            entity.Property(e => e.P25).HasColumnName("p25");
+            entity.Property(e => e.P50).HasColumnName("p50");
+            entity.Property(e => e.P75).HasColumnName("p75");
+            entity.Property(e => e.P90).HasColumnName("p90");
+            entity.Property(e => e.Moeda).HasColumnName("moeda");
+            entity.Property(e => e.Fonte).HasColumnName("fonte");
+            entity.Property(e => e.AtualizadoEm).HasColumnName("atualizado_em");
+
+            entity.HasOne(e => e.Ocupacao)
+                .WithMany()
+                .HasForeignKey(e => e.OcupacaoId)
+                .HasConstraintName("mercado_salario_ocupacao_id_fkey");
+
+            entity.HasOne(e => e.NivelHabilidade)
+                .WithMany()
+                .HasForeignKey(e => e.Nivel)
+                .HasConstraintName("mercado_salario_nivel_fkey");
+        });
+
+        modelBuilder.Entity<MercadoHabilidade>(entity =>
+        {
+            entity.ToTable("mercado_habilidade", "esco_dataset");
+
+            entity.HasKey(e => new { e.OcupacaoId, e.HabilidadeId })
+                .HasName("mercado_habilidade_pkey");
+
+            entity.Property(e => e.OcupacaoId).HasColumnName("ocupacao_id");
+            entity.Property(e => e.HabilidadeId).HasColumnName("habilidade_id");
+            entity.Property(e => e.Vagas).HasColumnName("vagas");
+            entity.Property(e => e.PctVagas).HasColumnName("pct_vagas");
+            entity.Property(e => e.Fonte).HasColumnName("fonte");
+            entity.Property(e => e.AtualizadoEm).HasColumnName("atualizado_em");
+
+            entity.HasOne(e => e.Habilidade)
+                .WithMany()
+                .HasForeignKey(e => e.HabilidadeId)
+                .HasConstraintName("mercado_habilidade_habilidade_id_fkey");
         });
 
         // Ocupação

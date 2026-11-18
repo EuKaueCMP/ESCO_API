@@ -78,6 +78,9 @@ builder.Services.AddScoped<OcupacaoService>();
 builder.Services.AddScoped<ISfiaRepository, SfiaRepository>();
 builder.Services.AddScoped<SfiaService>();
 
+builder.Services.AddScoped<IMercadoRepository, MercadoRepository>();
+builder.Services.AddScoped<MercadoService>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
