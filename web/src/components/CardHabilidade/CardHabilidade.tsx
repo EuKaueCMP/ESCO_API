@@ -20,6 +20,9 @@ export default function CardHabilidade({
         ) : (
           <span className="chip chip-cinza">ESCO</span>
         )}
+        {habilidade.classificacaoHabilidade === "softskill" && (
+          <span className="chip chip-rosa">soft</span>
+        )}
         <BadgeNivel nivel={nivel ?? null} />
       </div>
     </Link>

@@ -27,6 +27,11 @@ export default async function Habilidade({ params }: { params: Promise<{ id: str
           <span className="rotulo">
             {habilidade.codigo ? `código ${habilidade.codigo}` : "verbete ESCO"} · ID {habilidade.habilidadeId}
           </span>
+          <span
+            className={`chip ${habilidade.classificacaoHabilidade === "softskill" ? "chip-rosa" : "chip-cinza"}`}
+          >
+            {habilidade.classificacaoHabilidade === "softskill" ? "soft skill" : "hard skill"}
+          </span>
         </div>
         <h1 className="titulo-pagina">{habilidade.nome}</h1>
         {habilidade.descricao && <p className={styles.resumo}>{habilidade.descricao}</p>}

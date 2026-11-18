@@ -13,6 +13,9 @@ public class ListarHabilidadePorOcupacaoDto
 
     public string? TipoRelacionamento { get; set; }
 
+    /// <summary>Classificacao da habilidade: hardskill ou softskill.</summary>
+    public Domains.ClassificacaoHabilidadeEnum? ClassificacaoHabilidade { get; set; }
+
     public short? NivelHabilidade { get; set; }
 
     /// <summary>Texto de mercado do vinculo: ocupacao + habilidade + nivel de atuacao.</summary>

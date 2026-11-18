@@ -1,6 +1,7 @@
 using ESCO_API.Contexts;
 using ESCO_API.Domains;
 using ESCO_API.Interfaces;
+using ESCO_API.DTOs.HabilidadeDTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESCO_API.Repositories
@@ -16,17 +17,46 @@ namespace ESCO_API.Repositories
                 .ThenBy(h => h.Nome)
                 .ToListAsync();
 
-        public async Task<List<Habilidade>> ListarPorTermo(string termo)
+        public async Task<List<Habilidade>> ListarPorTermo(string termo, ClassificacaoHabilidadeEnum? classificacao = null)
         {
-            return await _ctx.Habilidade
+            IQueryable<Habilidade> query = _ctx.Habilidade
                 .Where(h => h.SearchVector.Matches(
                     EF.Functions.PlainToTsQuery("portuguese", termo)) ||
-                    EF.Functions.TrigramsSimilarity(h.Nome, termo) >= 0.3)
+                    EF.Functions.TrigramsSimilarity(h.Nome, termo) >= 0.3);
+
+            if (classificacao.HasValue)
+                query = query.Where(h => h.ClassificacaoHabilidade == classificacao.Value);
+
+            return await query
                 .OrderByDescending(h => h.SearchVector.Rank(
                     EF.Functions.PlainToTsQuery("portuguese", termo)))
                 .ThenByDescending(h => EF.Functions.TrigramsSimilarity(h.Nome, termo))
                 .ThenByDescending(h => h.PesoRelevancia ?? 0)
                 .ToListAsync();
+        }
+
+        public async Task<List<Habilidade>> ListarPorClassificacao(ClassificacaoHabilidadeEnum classificacao, int limite, int deslocamento)
+            => await _ctx.Habilidade
+                .Where(h => h.ClassificacaoHabilidade == classificacao)
+                .OrderByDescending(h => h.PesoRelevancia ?? 0)
+                .ThenBy(h => h.Nome)
+                .Skip(deslocamento)
+                .Take(limite)
+                .ToListAsync();
+
+        public async Task<ResumoClassificacaoDto> ContarPorClassificacao()
+        {
+            int hard = await _ctx.Habilidade.CountAsync(h => h.ClassificacaoHabilidade == ClassificacaoHabilidadeEnum.hardskill);
+            int soft = await _ctx.Habilidade.CountAsync(h => h.ClassificacaoHabilidade == ClassificacaoHabilidadeEnum.softskill);
+            int grupos = await _ctx.Habilidade.CountAsync(h => h.TipoConceito == TipoConceitoEnum.grupo_habilidade);
+
+            return new ResumoClassificacaoDto
+            {
+                HardSkill = hard,
+                SoftSkill = soft,
+                Total = hard + soft,
+                Grupos = grupos
+            };
         }
 
         public async Task<Habilidade?> ObterPorId(int habilidadeId) 

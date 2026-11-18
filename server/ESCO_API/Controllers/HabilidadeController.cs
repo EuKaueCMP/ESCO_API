@@ -38,15 +38,16 @@ namespace ESCO_API.Controllers
         /// <summary>Busca habilidades por termo livre.</summary>
         /// <remarks>Combina busca textual (tsvector em português) com similaridade de trigramas no nome.</remarks>
         /// <param name="termo">Texto a pesquisar (ex.: <c>docker</c>, <c>lgpd</c>).</param>
+        /// <param name="classificacao">Filtro opcional por tipo de skill: <c>hard</c> ou <c>soft</c>.</param>
         /// <returns>Habilidades que correspondem ao termo, ordenadas por relevância.</returns>
         /// <response code="200">Resultado da busca (pode ser vazio).</response>
         [HttpGet("termo/{termo}")]
         [ProducesResponseType(typeof(List<ListarHabilidadeDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorTermo(string termo)
+        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorTermo(string termo, [FromQuery] string? classificacao = null)
         {
             try
             {
-                return Ok(await _service.ListarPorTermo(termo));
+                return Ok(await _service.ListarPorTermo(termo, classificacao));
             }
             catch (DomainException ex)
             {
@@ -95,6 +96,41 @@ namespace ESCO_API.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        /// <summary>Lista habilidades de uma classificação: <c>hard</c> ou <c>soft</c> skill.</summary>
+        /// <remarks>Paginado por relevância. Use <c>limite</c> (1–200, padrão 60) e <c>pagina</c> (padrão 1).</remarks>
+        /// <param name="classificacao"><c>hard</c> ou <c>soft</c> (aceita também <c>hardskill</c>/<c>softskill</c>).</param>
+        /// <param name="limite">Quantidade por página (1–200).</param>
+        /// <param name="pagina">Página, começando em 1.</param>
+        /// <returns>Habilidades da classificação, mais relevantes primeiro.</returns>
+        /// <response code="200">Habilidades retornadas com sucesso.</response>
+        /// <response code="404">Classificação inválida.</response>
+        [HttpGet("classificacao/{classificacao}")]
+        [ProducesResponseType(typeof(List<ListarHabilidadeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<List<ListarHabilidadeDto>>> ListarPorClassificacao(
+            string classificacao,
+            [FromQuery] int limite = 60,
+            [FromQuery] int pagina = 1)
+        {
+            try
+            {
+                return Ok(await _service.ListarPorClassificacao(classificacao, limite, pagina));
+            }
+            catch (DomainException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>Resumo do acervo por classificação: totais de hard skill, soft skill e agrupamentos.</summary>
+        /// <response code="200">Contagens retornadas com sucesso.</response>
+        [HttpGet("resumo")]
+        [ProducesResponseType(typeof(ResumoClassificacaoDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResumoClassificacaoDto>> ResumoClassificacao()
+        {
+            return Ok(await _service.ObterResumoClassificacao());
         }
 
         /// <summary>Lista os 7 níveis de habilidade (padrão SFIA), com nome e descrição em português.</summary>

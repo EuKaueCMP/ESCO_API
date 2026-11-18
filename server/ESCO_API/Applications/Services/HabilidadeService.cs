@@ -27,17 +27,50 @@ namespace ESCO_API.Services
                 .ToList();
         }
 
-        public async Task<List<ListarHabilidadeDto>> ListarPorTermo(string termo)
+        public async Task<List<ListarHabilidadeDto>> ListarPorTermo(string termo, string? classificacao = null)
         {
             if (string.IsNullOrWhiteSpace(termo))
                 throw new DomainException("Insira um termo.");
 
-            List<Habilidade> habilidades = await _repository.ListarPorTermo(termo)
+            ClassificacaoHabilidadeEnum? tipo = string.IsNullOrWhiteSpace(classificacao) ? null : NormalizarClassificacao(classificacao);
+
+            List<Habilidade> habilidades = await _repository.ListarPorTermo(termo, tipo)
                 ?? throw new DomainException("Nenhuma habilidade encontrada.");
 
             return habilidades
                 .Select(h => DomainToDto.HabilidadeToDto(h))
                 .ToList();
+        }
+
+        /// <summary>Lista habilidades de uma classificacao (hard/soft), paginada por relevancia.</summary>
+        public async Task<List<ListarHabilidadeDto>> ListarPorClassificacao(string classificacao, int limite, int pagina)
+        {
+            ClassificacaoHabilidadeEnum tipo = NormalizarClassificacao(classificacao);
+
+            limite = Math.Clamp(limite, 1, 200);
+            pagina = Math.Max(pagina, 1);
+
+            List<Habilidade> habilidades = await _repository.ListarPorClassificacao(tipo, limite, (pagina - 1) * limite);
+
+            return habilidades
+                .Select(h => DomainToDto.HabilidadeToDto(h))
+                .ToList();
+        }
+
+        /// <summary>Resumo do acervo por classificacao: hard, soft, total e agrupamentos.</summary>
+        public async Task<ResumoClassificacaoDto> ObterResumoClassificacao()
+            => await _repository.ContarPorClassificacao();
+
+        private static ClassificacaoHabilidadeEnum NormalizarClassificacao(string classificacao)
+        {
+            string valor = (classificacao ?? string.Empty).Trim().ToLowerInvariant();
+
+            return valor switch
+            {
+                "soft" or "softskill" or "soft-skill" or "soft_skill" => ClassificacaoHabilidadeEnum.softskill,
+                "hard" or "hardskill" or "hard-skill" or "hard_skill" => ClassificacaoHabilidadeEnum.hardskill,
+                _ => throw new DomainException("Classificacao invalida. Use 'hard' ou 'soft'.")
+            };
         }
 
 

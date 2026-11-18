@@ -90,7 +90,8 @@ namespace ESCO_API.Repositories
                         NivelHabilidade = vinculo.nivel,
                         DescricaoNivel = vinculo.desc,
                         Justificativa = vinculo.just,
-                        PesoRelevancia = h.PesoRelevancia
+                        PesoRelevancia = h.PesoRelevancia,
+                        ClassificacaoHabilidade = h.ClassificacaoHabilidade
                     };
                 })
                 .OrderByDescending(h => h.PesoRelevancia ?? 0)

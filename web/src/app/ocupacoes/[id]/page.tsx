@@ -30,6 +30,9 @@ export default async function OcupacaoPage({ params }: { params: Promise<{ id: s
     (v) => v.tipoRelacionamento !== "essencial" && v.pesoRelevancia !== null && v.pesoRelevancia > 2,
   );
   const grupo = (grupos ?? []).find((g) => g.grupoId === (ocupacao as { grupoId?: number }).grupoId);
+  const softDaOcupacao = (vinculos ?? []).filter(
+    (v) => v.classificacaoHabilidade === "softskill",
+  ).length;
   const topSkills = (mercado?.habilidades ?? []).slice(0, 10);
   const inicial = mercado?.salarios?.[0];
 
@@ -140,7 +143,8 @@ export default async function OcupacaoPage({ params }: { params: Promise<{ id: s
           <div className={styles.cabecalhoSecao}>
             <h2 className={styles.secaoTitulo}>Habilidades da ocupação</h2>
             <span className={styles.secaoMeta}>
-              {essenciais.length} essenciais · {complementares.length} complementares
+              {essenciais.length} essenciais · {complementares.length} complementares ·{" "}
+              {softDaOcupacao} soft
             </span>
           </div>
           <div className={styles.skills}>
@@ -174,6 +178,9 @@ function SkillVinculo({ vinculo }: { vinculo: OcupacaoHabilidades }) {
       <div className={styles.skillTopo}>
         <span className={styles.skillNome}>{vinculo.nome}</span>
         {vinculo.codigo && <span className="codigo-sfia">{vinculo.codigo}</span>}
+        {vinculo.classificacaoHabilidade === "softskill" && (
+          <span className="chip chip-rosa">soft</span>
+        )}
         <BadgeNivel nivel={vinculo.nivelHabilidade} />
       </div>
       {vinculo.justificativa && <p className={styles.skillJust}>{vinculo.justificativa}</p>}

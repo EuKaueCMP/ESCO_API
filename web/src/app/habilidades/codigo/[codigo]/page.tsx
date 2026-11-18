@@ -20,6 +20,11 @@ export default async function HabilidadePorCodigo({ params }: { params: Promise<
           <Link href="/habilidades" className={styles.voltar}>← habilidades</Link>
           <span className={styles.separador}>/</span>
           <span className="rotulo">código {codigo}</span>
+          <span
+            className={`chip ${habilidade.classificacaoHabilidade === "softskill" ? "chip-rosa" : "chip-cinza"}`}
+          >
+            {habilidade.classificacaoHabilidade === "softskill" ? "soft skill" : "hard skill"}
+          </span>
         </div>
         <h1 className="titulo-pagina">{habilidade.nome}</h1>
         {habilidade.descricao && <p className={styles.resumo}>{habilidade.descricao}</p>}

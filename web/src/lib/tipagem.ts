@@ -29,11 +29,14 @@ export interface SfiaAtributoNivel {
   descricao: string;
 }
 
+export type ClassificacaoHabilidade = "hardskill" | "softskill" | null;
+
 export interface HabilidadeTermo {
   habilidadeId: number;
   nome: string;
   codigo: string | null;
   descricao: string | null;
+  classificacaoHabilidade?: ClassificacaoHabilidade;
 }
 
 export interface HabilidadeNiveis {
@@ -69,6 +72,7 @@ export interface OcupacaoHabilidades {
   descricaoNivel: string | null;
   justificativa: string | null;
   pesoRelevancia: number | null;
+  classificacaoHabilidade?: ClassificacaoHabilidade;
 }
 
 export interface ProximaOcupacao {
@@ -114,6 +118,13 @@ export interface Mercado {
   fonte: string | null;
   salarios: MercadoSalario[];
   habilidades: MercadoHabilidade[];
+}
+
+export interface ResumoClassificacao {
+  hardSkill: number;
+  softSkill: number;
+  total: number;
+  grupos: number;
 }
 
 export interface ResultadoBusca {

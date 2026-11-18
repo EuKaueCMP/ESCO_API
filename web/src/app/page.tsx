@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { apiGet } from "@/lib/api";
-import type { Mercado, Nivel, SfiaView } from "@/lib/tipagem";
+import type { Mercado, Nivel, ResumoClassificacao, SfiaView } from "@/lib/tipagem";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import styles from "./page.module.css";
 
@@ -19,10 +19,11 @@ const inteiro = (n: number) => n.toLocaleString("pt-BR");
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
 export default async function Home() {
-  const [views, niveis, mercados] = await Promise.all([
+  const [views, niveis, mercados, resumo] = await Promise.all([
     apiGet<SfiaView[]>("/sfia/view"),
     apiGet<Nivel[]>("/habilidade/niveis"),
     Promise.all(DESTAQUE.map((d) => apiGet<Mercado>(`/mercado/ocupacao/${d.ocupacaoId}`))),
+    apiGet<ResumoClassificacao>("/habilidade/resumo"),
   ]);
 
   const raizes = (views ?? []).filter((v) => v.profundidade === 1).slice(0, 12);
@@ -59,6 +60,14 @@ export default async function Home() {
             <span>vagas analisadas</span>
             <strong>785.741</strong>
           </div>
+          <Link href="/habilidades?tipo=hard" className={styles.fichaLinha}>
+            <span>hard skills</span>
+            <strong>{(resumo?.hardSkill ?? 0).toLocaleString("pt-BR")}</strong>
+          </Link>
+          <Link href="/habilidades?tipo=soft" className={styles.fichaLinha}>
+            <span>soft skills</span>
+            <strong>{(resumo?.softSkill ?? 0).toLocaleString("pt-BR")}</strong>
+          </Link>
           <div className={styles.fichaLinha}>
             <span>níveis</span>
             <strong>7</strong>

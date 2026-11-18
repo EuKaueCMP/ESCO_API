@@ -56,6 +56,9 @@
   color: var(--texto-2);
 }
 
+a.fichaLinha:hover { color: var(--rosa); }
+a.fichaLinha:hover strong { color: var(--rosa); }
+
 .fichaLinha strong {
   font-family: var(--fonte-mono);
   font-weight: 500;
