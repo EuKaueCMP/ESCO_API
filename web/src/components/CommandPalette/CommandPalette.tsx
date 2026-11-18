@@ -10,6 +10,7 @@ const ATALHOS = [
   { href: "/habilidades", rotulo: "pesquisar", nome: "Habilidades" },
   { href: "/ocupacoes", rotulo: "pesquisar", nome: "Ocupações" },
   { href: "/niveis", rotulo: "consultar", nome: "Níveis e atributos" },
+  { href: "/docs", rotulo: "integrar", nome: "Documentação da API" },
 ];
 
 export default function CommandPalette() {

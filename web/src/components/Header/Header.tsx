@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/habilidades", label: "habilidades" },
   { href: "/ocupacoes", label: "ocupações" },
   { href: "/niveis", label: "níveis" },
+  { href: "/docs", label: "docs" },
 ];
 
 export default function Header() {
