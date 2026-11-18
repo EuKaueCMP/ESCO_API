@@ -1,0 +1,23 @@
+.faixa {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 3px;
+  background: var(--borda);
+}
+
+.ativo {
+  background: var(--rosa-forte);
+}
+
+.rotulo {
+  margin-left: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--rosa);
+}

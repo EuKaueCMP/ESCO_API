@@ -1,0 +1,309 @@
+:root {
+  --fundo: #1b1a1f;
+  --fundo-2: #211f26;
+  --superficie: #26242c;
+  --superficie-2: #2d2b34;
+  --borda: #393641;
+  --borda-suave: #2f2c37;
+  --texto: #ede9ee;
+  --texto-suave: #a9a4b1;
+  --texto-fraco: #7d7886;
+  --rosa: #f0b7cd;
+  --rosa-forte: #e692b6;
+  --rosa-fundo: rgba(240, 183, 205, 0.09);
+  --verde: #93d1ab;
+  --verde-forte: #5fae83;
+  --verde-fundo: rgba(147, 209, 171, 0.08);
+  --cinza-fundo: rgba(169, 164, 177, 0.08);
+  --raio: 14px;
+  --raio-m: 10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte-montserrat), sans-serif;
+  font-size: 15.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input {
+  font-family: inherit;
+}
+
+.container {
+  width: min(91%, 1160px);
+  margin: 0 auto;
+}
+
+/* ---------- tipografia de conteudo ---------- */
+.titulo-pagina {
+  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.subtitulo-pagina {
+  color: var(--texto-suave);
+  max-width: 640px;
+  margin-bottom: 34px;
+}
+
+.titulo-secao {
+  font-size: 1.12rem;
+  font-weight: 600;
+  margin: 42px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.titulo-secao svg {
+  color: var(--rosa-forte);
+}
+
+/* ---------- cards ---------- */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio);
+  padding: 16px 18px;
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+
+a.card:hover {
+  border-color: var(--rosa-forte);
+  background: var(--superficie-2);
+  transform: translateY(-2px);
+}
+
+.card .card-titulo {
+  font-weight: 600;
+  font-size: 0.97rem;
+  margin-bottom: 4px;
+}
+
+.card .card-sub {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card .card-meta {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------- badges e chips ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chip-rosa {
+  background: var(--rosa-fundo);
+  color: var(--rosa);
+}
+
+.chip-verde {
+  background: var(--verde-fundo);
+  color: var(--verde);
+}
+
+.chip-cinza {
+  background: var(--cinza-fundo);
+  color: var(--texto-suave);
+}
+
+.codigo-sfia {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--rosa-forte);
+  background: var(--rosa-fundo);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+/* ---------- niveis ---------- */
+.faixa-niveis {
+  display: flex;
+  gap: 6px;
+}
+
+.ponto-nivel {
+  height: 7px;
+  flex: 1;
+  border-radius: 4px;
+  background: var(--borda);
+}
+
+.ponto-nivel.ativo {
+  background: var(--rosa-forte);
+}
+
+/* ---------- secoes de detalhe ---------- */
+.bloco {
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+
+.bloco-titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- barra de busca ---------- */
+.busca-form {
+  display: flex;
+  gap: 10px;
+}
+
+.busca-input {
+  flex: 1;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  color: var(--texto);
+  font-size: 0.98rem;
+  padding: 13px 18px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.busca-input:focus {
+  border-color: var(--rosa-forte);
+}
+
+.busca-input::placeholder {
+  color: var(--texto-fraco);
+}
+
+.busca-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--rosa-forte);
+  color: #2a1620;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  border-radius: 12px;
+  padding: 0 20px;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.busca-btn:hover {
+  filter: brightness(1.08);
+}
+
+/* ---------- estado vazio ---------- */
+.vazio {
+  text-align: center;
+  color: var(--texto-suave);
+  padding: 60px 20px;
+}
+
+.vazio strong {
+  display: block;
+  font-size: 1.1rem;
+  color: var(--texto);
+  margin-bottom: 6px;
+}
+
+/* ---------- accordions ---------- */
+details.acordeao {
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio);
+  padding: 0 18px;
+}
+
+details.acordeao[open] {
+  border-color: var(--borda);
+}
+
+details.acordeao summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+details.acordeao summary::-webkit-details-marker {
+  display: none;
+}
+
+details.acordeao .acordeao-corpo {
+  padding: 0 0 18px;
+}
+
+/* ---------- utilidades ---------- */
+.linha-mutada {
+  color: var(--texto-suave);
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (max-width: 640px) {
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+}

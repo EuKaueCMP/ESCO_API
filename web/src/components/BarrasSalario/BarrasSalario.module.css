@@ -1,0 +1,71 @@
+.grade {
+  display: grid;
+  gap: 20px;
+}
+
+.linha {
+  display: grid;
+  gap: 6px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.nome {
+  color: var(--texto);
+}
+
+.barra {
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--cinza-fundo);
+  overflow: hidden;
+}
+
+.barra span {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+
+.p25 {
+  background: rgba(147, 209, 171, 0.25);
+  border-radius: 7px 0 0 7px;
+}
+
+.p50 {
+  background: rgba(147, 209, 171, 0.45);
+  border-radius: 7px 0 0 7px;
+}
+
+.p75 {
+  background: rgba(147, 209, 171, 0.6);
+  border-radius: 7px 0 0 7px;
+}
+
+.p90 {
+  background: rgba(147, 209, 171, 0.3);
+  border-radius: 7px;
+}
+
+.valores {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+}
+
+.mediana {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.amostra {
+  font-size: 0.72rem;
+  color: var(--texto-fraco);
+}

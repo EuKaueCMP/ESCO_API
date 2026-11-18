@@ -1,0 +1,31 @@
+.migalha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 26px 0 14px;
+  font-size: 0.82rem;
+}
+
+.migalhaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.migalhaSeta {
+  color: var(--texto-fraco);
+}
+
+.migalhaLink {
+  color: var(--texto-suave);
+}
+
+.migalhaLink:hover {
+  color: var(--rosa);
+}
+
+.migalhaAtual {
+  color: var(--rosa);
+  font-weight: 600;
+}

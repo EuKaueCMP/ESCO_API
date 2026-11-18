@@ -1,0 +1,63 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(27, 26, 31, 0.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--borda-suave);
+}
+
+.conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.08rem;
+  letter-spacing: -0.02em;
+}
+
+.logoPonto {
+  color: var(--rosa-forte);
+  margin: 0 1px;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--texto-suave);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 7px 13px;
+  border-radius: 999px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.link:hover {
+  color: var(--texto);
+  background: var(--cinza-fundo);
+}
+
+.ativo {
+  color: var(--rosa);
+  background: var(--rosa-fundo);
+}
+
+@media (max-width: 640px) {
+  .link span {
+    display: none;
+  }
+
+  .link {
+    padding: 8px 11px;
+  }
+}

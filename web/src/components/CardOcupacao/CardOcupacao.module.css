@@ -1,0 +1,20 @@
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.icone {
+  color: var(--verde-forte);
+}
+
+.sub {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}

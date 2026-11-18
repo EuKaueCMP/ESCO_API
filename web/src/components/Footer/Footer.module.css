@@ -1,0 +1,26 @@
+.footer {
+  border-top: 1px solid var(--borda-suave);
+  margin-top: 70px;
+  padding: 26px 0 34px;
+}
+
+.conteudo {
+  color: var(--texto-fraco);
+  font-size: 0.82rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.creditos {
+  color: var(--texto-suave);
+}
+
+.footer a {
+  color: var(--rosa);
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

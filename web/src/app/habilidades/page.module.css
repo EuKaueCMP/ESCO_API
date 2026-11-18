@@ -1,0 +1,9 @@
+.populares {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.populares .card {
+  min-width: 180px;
+}

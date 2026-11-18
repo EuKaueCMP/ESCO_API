@@ -1,0 +1,40 @@
+.lista {
+  display: grid;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.iconeHab {
+  color: var(--rosa-forte);
+}
+
+.iconeOcup {
+  color: var(--verde-forte);
+}
+
+.nome {
+  font-weight: 600;
+  font-size: 0.93rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tipo {
+  flex-shrink: 0;
+}
+
+.score {
+  color: var(--texto-fraco);
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: 38px;
+  text-align: right;
+}

@@ -1,0 +1,64 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 30px;
+}
+
+.codigo {
+  font-size: 0.95rem;
+  padding: 6px 12px;
+}
+
+.cabecalhoNivel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.numeroNivel {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--rosa-fundo);
+  color: var(--rosa);
+  font-weight: 800;
+  font-size: 1.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.nomeNivel {
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.descritor {
+  color: var(--texto);
+  max-width: 760px;
+}
+
+.rubrica {
+  margin-top: 14px;
+  background: var(--verde-fundo);
+  border: 1px solid rgba(147, 209, 171, 0.22);
+  border-radius: var(--raio-m);
+  padding: 13px 16px;
+  max-width: 760px;
+}
+
+.rubricaTitulo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+}
+
+.rubrica p {
+  color: var(--texto-suave);
+  font-size: 0.88rem;
+}

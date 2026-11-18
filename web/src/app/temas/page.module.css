@@ -1,0 +1,7 @@
+.card-sub b {
+  color: var(--rosa);
+}
+
+.card {
+  position: relative;
+}

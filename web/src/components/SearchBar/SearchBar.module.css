@@ -1,0 +1,15 @@
+.form {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .form {
+    flex-direction: column;
+  }
+
+  .busca-btn {
+    justify-content: center;
+    padding: 12px 20px;
+  }
+}
