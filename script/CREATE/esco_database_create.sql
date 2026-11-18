@@ -33,6 +33,15 @@ CREATE TYPE tipo_relacionamento_enum
 AS ENUM ('essencial', 'opcional');
 ----
 
+-- Niveis de responsabilidade SFIA (1 a 7) usados pelas habilidades e pelo
+-- vinculo ocupacao-habilidade. Veja script/INSERTs/esco_sfia_niveis.sql.
+CREATE TABLE nivel_habilidade
+(
+	nivel SMALLINT PRIMARY KEY,
+	nome TEXT NOT NULL,
+	descricao TEXT NOT NULL
+);
+
 
 CREATE TABLE grupo_ocupacao
 (
@@ -61,6 +70,8 @@ CREATE TABLE ocupacao
 	titulo TEXT NOT NULL,
 	descricao TEXT NOT NULL,
 	status status_enum NOT NULL,
+	-- peso de relevancia de busca no mercado (1-5); veja esco_pesos_relevancia.sql
+	peso_relevancia SMALLINT,
 	nomes_alternativos JSONB,
 	grupo_ocupacao_id INTEGER NOT NULL REFERENCES grupo_ocupacao(grupo_id),
 	search_vector TSVECTOR
@@ -80,6 +91,9 @@ CREATE TABLE habilidade
 (
 	habilidade_id SERIAL PRIMARY KEY,
 	uri VARCHAR(100) UNIQUE NOT NULL,
+	codigo VARCHAR(8) UNIQUE, -- codigo no padrao SFIA (4 letras maiusculas)
+	-- peso de relevancia de busca no mercado (1-5); NULL para grupos de habilidade
+	peso_relevancia SMALLINT,
 	nome TEXT NOT NULL,
 	descricao TEXT NOT NULL,
 	nomes_alternativos JSONB,
@@ -130,8 +144,28 @@ CREATE TABLE ocupacao_habilidade
 	ocupacao_id INTEGER NOT NULL REFERENCES ocupacao(ocupacao_id),
 	habilidade_id INTEGER NOT NULL REFERENCES habilidade(habilidade_id),
 	tipo_relacionamento tipo_relacionamento_enum NOT NULL,
-	
+	-- nivel SFIA (1-7) exigido da habilidade nesta ocupacao
+	nivel_habilidade SMALLINT REFERENCES nivel_habilidade(nivel),
+	-- texto de mercado do vinculo (ocupacao + habilidade + nivel)
+	descricao TEXT,
+
 	PRIMARY KEY (ocupacao_id, habilidade_id)
+);
+
+-- Descritor de nivel especifico por habilidade (faixa SFIA real da skill),
+-- texto oficial do site sfia-online.org/pt (descritores + fallback EN).
+-- Veja script/INSERTs/esco_sfia_descritores.sql.
+CREATE TABLE nivel_habilidade_descritor
+(
+	habilidade_id INTEGER NOT NULL REFERENCES habilidade(habilidade_id) ON DELETE CASCADE,
+	nivel SMALLINT NOT NULL REFERENCES nivel_habilidade(nivel) ON DELETE CASCADE,
+	descricao TEXT NOT NULL,
+	descricao_en TEXT,
+	-- 'sfia_oficial' (descritor oficial do site SFIA) ou 'sintetizado' (essencia
+	-- oficial do nivel + texto ESCO da habilidade; veja esco_niveis_expandidos.sql)
+	origem TEXT NOT NULL DEFAULT 'sintetizado',
+
+	PRIMARY KEY (habilidade_id, nivel)
 );
 
 
