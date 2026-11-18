@@ -62,23 +62,24 @@ namespace ESCO_API.Repositories
                     SELECT habilidade_id AS "HabilidadeId",
                            nivel_habilidade AS "NivelHabilidade",
                            tipo_relacionamento::text AS "TipoRelacionamento",
-                           descricao AS "DescricaoNivel"
+                           descricao AS "DescricaoNivel",
+                           justificativa AS "Justificativa"
                     FROM esco_dataset.ocupacao_habilidade
                     WHERE ocupacao_id = {ocupacaoId}
                     """)
                 .ToListAsync();
 
-            Dictionary<int, (short? nivel, string tipo, string desc)> porHabilidade = vinculos
+            Dictionary<int, (short? nivel, string tipo, string desc, string? just)> porHabilidade = vinculos
                 .GroupBy(v => v.HabilidadeId)
                 .ToDictionary(
                     g => g.Key,
                     g => (g.First().NivelHabilidade, g.First().TipoRelacionamento ?? "opcional",
-                          g.First().DescricaoNivel));
+                          g.First().DescricaoNivel, g.First().Justificativa));
 
             return habilidades
                 .Select(h =>
                 {
-                    porHabilidade.TryGetValue(h.HabilidadeId, out (short? nivel, string tipo, string desc) vinculo);
+                    porHabilidade.TryGetValue(h.HabilidadeId, out (short? nivel, string tipo, string desc, string? just) vinculo);
                     return new ListarHabilidadePorOcupacaoDto
                     {
                         HabilidadeId = h.HabilidadeId,
@@ -88,6 +89,7 @@ namespace ESCO_API.Repositories
                         TipoRelacionamento = vinculo.tipo,
                         NivelHabilidade = vinculo.nivel,
                         DescricaoNivel = vinculo.desc,
+                        Justificativa = vinculo.just,
                         PesoRelevancia = h.PesoRelevancia
                     };
                 })
@@ -106,6 +108,8 @@ namespace ESCO_API.Repositories
             public string? TipoRelacionamento { get; set; }
 
             public string? DescricaoNivel { get; set; }
+
+            public string? Justificativa { get; set; }
         }
 
         /// <summary>Ocupacao seguinte na trilha de carreira (SQL bruto, agregado sobre skills essenciais).</summary>

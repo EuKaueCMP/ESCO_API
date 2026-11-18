@@ -19,4 +19,7 @@ public class ListarHabilidadePorOcupacaoDto
     public string? DescricaoNivel { get; set; }
 
     public short? PesoRelevancia { get; set; }
+
+    /// <summary>Porque o nivel e exigido (atributos genericos SFIA no nivel).</summary>
+    public string? Justificativa { get; set; }
 }
